@@ -5,6 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ascend Real Estate | الوساطة والعقارات الفاخرة</title>
 
+    <!-- 1. إضافة أيكونة المتصفح (Favicon) -->
+    <link rel="icon" type="image/png" href="favicon.png">
+    <link rel="apple-touch-icon" href="favicon.png">
+
     <!-- Google Fonts & Font Awesome Icons -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -102,12 +106,8 @@
                 <!-- Ascend Real Estate Logo -->
                 <div class="flex items-center" id="mainHeaderLogo">
                     <a href="#" class="flex items-center gap-3 group">
-                        <div class="w-10 h-10 transition-transform group-hover:scale-105">
-                            <svg viewBox="0 0 100 100" class="w-full h-full fill-ascend-green">
-                                <rect width="100" height="100" rx="6" />
-                                <path d="M 0,100 A 70,70 0 0,1 70,30 L 70,65 A 35,35 0 0,0 0,100 Z" fill="#0E1217" />
-                            </svg>
-                        </div>
+                        <!-- 2. استبدال الـ SVG بصورة الشعار الحقيقية -->
+                        <img src="favicon.png" alt="Ascend Real Estate Logo" class="w-10 h-10 object-contain transition-transform group-hover:scale-105">
                         <div class="flex flex-col">
                             <span class="font-inter font-extrabold text-2xl tracking-tight text-white leading-none">
                                 ascend
@@ -534,7 +534,7 @@
         </div>
     </footer>
 
-    <!-- JavaScript Logic -->
+    <!-- JavaScript Logic & GitHub Upload Handler -->
     <script>
         const defaultProperties = [
             { id: 1, title: 'فيلا مستقلة بإطلالة مباشرة على الجولف', city: 'القاهرة الجديدة', type: 'فيلا', price: 28500000, priceText: '28,500,000 ج.م', action: 'buy', beds: 5, baths: 6, area: 580, img: 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=800&q=80', images: ['https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=800&q=80'] },
@@ -549,15 +549,6 @@
         let searchActionType = 'buy';
         let activeGalleryImages = [];
         let activeGalleryIndex = 0;
-
-        function loadLogo() {
-            const storedLogo = localStorage.getItem('ascend_logo');
-            if (storedLogo) {
-                document.getElementById('mainHeaderLogo').innerHTML = `
-                    <img src="${storedLogo}" class="h-10 max-w-[180px] object-contain" alt="Ascend Real Estate">
-                `;
-            }
-        }
 
         function mapApiProperty(item) {
             const imgs = item.images && item.images.length ? item.images : [item.img || item.imageUrl];
@@ -588,7 +579,6 @@
         }
 
         window.addEventListener('load', () => {
-            loadLogo();
             renderProperties(getStoredProperties());
             runMortgageCalc();
 
@@ -788,6 +778,53 @@
 
             document.getElementById('realestate-form').classList.add('hidden');
             document.getElementById('re-form-success').classList.remove('hidden');
+        }
+
+        /* 3. دالة رفع الصور المباشرة إلى GitHub API لاستخدامها في لوحة الأدمن */
+        const GITHUB_TOKEN = 'ضع_ال_TOKEN_الخاص_بجيت_هب_هنا';
+        const REPO_OWNER = 'ascendrealestate-dot';
+        const REPO_NAME = 'acsendrs';
+
+        async function uploadImageToGitHub(file) {
+            const fileName = `${Date.now()}_${file.name.replace(/\s+/g, '_')}`;
+            const filePath = `images/${fileName}`; 
+
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+
+                reader.onload = async () => {
+                    const base64Content = reader.result.split(',')[1];
+
+                    try {
+                        const response = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${filePath}`, {
+                            method: 'PUT',
+                            headers: {
+                                'Authorization': `token ${GITHUB_TOKEN}`,
+                                'Content-Type': 'application/json',
+                                'Accept': 'application/vnd.github.v3+json'
+                            },
+                            body: JSON.stringify({
+                                message: `Upload image ${fileName} via Admin`,
+                                content: base64Content
+                            })
+                        });
+
+                        const data = await response.json();
+
+                        if (response.ok) {
+                            const rawImageUrl = `https://raw.githubusercontent.com/${REPO_OWNER}/${REPO_NAME}/main/${filePath}`;
+                            resolve(rawImageUrl);
+                        } else {
+                            reject(data.message || 'حدث خطأ أثناء الرفع');
+                        }
+                    } catch (error) {
+                        reject(error);
+                    }
+                };
+
+                reader.onerror = (error) => reject(error);
+            });
         }
     </script>
 </body>
