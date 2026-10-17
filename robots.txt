@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://ascendrealestate69-svg.github.io/ascend/sitemap.xml
