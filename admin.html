@@ -347,6 +347,7 @@
             document.getElementById('propLoc').value = p.location;
             document.getElementById('propType').value = p.type || 'villa';
             document.getElementById('propBeds').value = p.beds || 3;
+            document.getElementById('propBaths').value = p.baths || 2;
             document.getElementById('propArea').value = p.area || 200;
 
             currentUploadedImages = p.images && p.images.length ? [...p.images] : [p.img];
@@ -374,6 +375,7 @@
                             location: document.getElementById('propLoc').value,
                             type: document.getElementById('propType').value,
                             beds: Number(document.getElementById('propBeds').value),
+                            baths: Number(document.getElementById('propBaths').value),
                             area: Number(document.getElementById('propArea').value),
                             img: finalImages[0],
                             images: finalImages
@@ -389,6 +391,7 @@
                     location: document.getElementById('propLoc').value,
                     type: document.getElementById('propType').value,
                     beds: Number(document.getElementById('propBeds').value),
+                    baths: Number(document.getElementById('propBaths').value),
                     area: Number(document.getElementById('propArea').value),
                     img: finalImages[0],
                     images: finalImages
