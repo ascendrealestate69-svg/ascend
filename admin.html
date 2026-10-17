@@ -3,26 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>عنوان موقعك</title>
-
-    <!-- أيقونة الموقع (Favicon) -->
-    <link rel="icon" type="image/png" href="favicon.png">
-    <link rel="apple-touch-icon" href="favicon.png">
-
-</head>
-<body>
-
-</body>
-</html>
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ascend Real Estate - لوحة التحكم الإدارية</title>
-    <!-- Font Awesome & Cairo Font -->
+    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Cairo Font -->
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800&display=swap" rel="stylesheet">
 
-    <!-- كود حماية اللوحة بكلمة سر -->
+    <!-- كود حماية اللوحة بكلمة سر ثابتة -->
     <script>
         (function checkAdminAuth() {
             const pass = prompt("برجاء إدخال كلمة المرور للوصول للوحة التحكم:");
@@ -83,6 +70,7 @@
         .leads-table { width: 100%; border-collapse: collapse; background: var(--bg-card); border-radius: 12px; overflow: hidden; }
         .leads-table th, .leads-table td { padding: 14px 18px; text-align: right; border-bottom: 1px solid var(--border-color); }
         .leads-table th { background: rgba(255,255,255,0.02); color: var(--text-muted); font-size: 14px; }
+        .upload-status { font-size: 12px; color: var(--primary-neon); margin-top: 6px; display: none; }
     </style>
 </head>
 <body>
@@ -178,7 +166,7 @@
                     <div class="form-group"><label>السعر (EGP)</label><input type="number" id="propPrice" class="form-control" required></div>
                     <div class="form-group"><label>الموقع / المدينة</label><input type="text" id="propLoc" class="form-control" required></div>
                 </div>
-                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px;">
+                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 10px;">
                     <div class="form-group">
                         <label>النوع</label>
                         <select id="propType" class="form-control">
@@ -190,12 +178,13 @@
                     <div class="form-group"><label>المساحة (م²)</label><input type="number" id="propArea" class="form-control" value="250" required></div>
                 </div>
                 <div class="form-group">
-                    <label>صور العقار (يمكنك تحديد عدة صور معاً)</label>
+                    <label>صور العقار (سيتم رفعها مباشرة لسيرفر GitHub)</label>
                     <div class="file-upload-box" onclick="document.getElementById('propFiles').click()">
-                        <i class="fa-solid fa-images" style="font-size: 28px; color: var(--primary-neon);"></i>
+                        <i class="fa-solid fa-cloud-arrow-up" style="font-size: 28px; color: var(--primary-neon);"></i>
                         <p style="margin-top: 8px; font-size: 13px;">اضغط لاختيار صورة أو عدة صور معاً من جهازك</p>
                     </div>
                     <input type="file" id="propFiles" accept="image/*" multiple style="display: none;" onchange="handleMultipleImagesUpload(event)">
+                    <p class="upload-status" id="uploadStatus"><i class="fa-solid fa-spinner fa-spin"></i> جاري رفع الصور لسيرفر GitHub...</p>
                     <div class="images-preview-grid" id="imagesPreviewGrid"></div>
                 </div>
                 <div style="display: flex; gap: 12px; margin-top: 24px;">
@@ -207,16 +196,91 @@
     </div>
 
     <script>
+        /* إعدادات مفتاح GitHub API */
+        const GITHUB_TOKEN = 'ضع_التوكين_الخاص_بك_هنا'; // ضع الكود المبتدئ بـ ghp_
+        const REPO_OWNER = 'ascendrealestate69-svg';
+        const REPO_NAME = 'ascend';
+
         let currentUploadedImages = [];
 
         const defaultProperties = [
             { id: 1, title: 'فيلا فاخرة بتصميم مودرن وحمام سباحة', price: 28500000, location: 'القاهرة الجديدة - التجمع الخامس', type: 'villa', beds: 5, baths: 6, area: 580, img: 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=800&q=80', images: ['https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=800&q=80'] },
-            { id: 2, title: 'شقة فاخرة مفروشة بالكامل في كمبوند زايد', price: 9800000, location: 'الشيخ زايد - كمبوند متكامل', type: 'penthouse', beds: 3, baths: 3, area: 210, img: 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80', images: ['https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80'] },
-            { id: 3, title: 'مكتب إداري بالتشطيب الكامل بمنطقة الأعمال', price: 6500000, location: 'العاصمة الإدارية - CBD', type: 'apartment', beds: 2, baths: 2, area: 125, img: 'https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=800&q=80', images: ['https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=800&q=80'] },
-            { id: 4, title: 'شالية صف أول على البحر في أفضل قرى الساحل', price: 14200000, location: 'الساحل الشمالي - رأس الحكمة', type: 'apartment', beds: 3, baths: 2, area: 160, img: 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=800&q=80', images: ['https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=800&q=80'] },
-            { id: 5, title: 'تاون هاوس استلام فوري بتقسيط مريح', price: 16500000, location: 'القاهرة الجديدة - التجمع الخامس', type: 'villa', beds: 4, baths: 4, area: 340, img: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=800&q=80', images: ['https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=800&q=80'] },
-            { id: 6, title: 'بنتهاوس مودرن مع حمام سباحة خاص', price: 85000, location: 'الشيخ زايد - التوسع الشمالي', type: 'penthouse', beds: 4, baths: 4, area: 310, img: 'https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?auto=format&fit=crop&w=800&q=80', images: ['https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?auto=format&fit=crop&w=800&q=80'] }
+            { id: 2, title: 'شقة فاخرة مفروشة بالكامل في كمبوند زايد', price: 9800000, location: 'الشيخ زايد - كمبوند متكامل', type: 'penthouse', beds: 3, baths: 3, area: 210, img: 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80', images: ['https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80'] }
         ];
+
+        /* دالة الرفع السحابي الفوري لـ GitHub API */
+        async function uploadFileToGitHub(file) {
+            const fileName = `${Date.now()}_${file.name.replace(/\s+/g, '_')}`;
+            const filePath = `images/${fileName}`;
+
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = async () => {
+                    const base64Content = reader.result.split(',')[1];
+                    try {
+                        const response = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${filePath}`, {
+                            method: 'PUT',
+                            headers: {
+                                'Authorization': `token ${GITHUB_TOKEN}`,
+                                'Content-Type': 'application/json',
+                                'Accept': 'application/vnd.github.v3+json'
+                            },
+                            body: JSON.stringify({
+                                message: `Upload image ${fileName} via Admin Panel`,
+                                content: base64Content
+                            })
+                        });
+
+                        const data = await response.json();
+                        if (response.ok) {
+                            const rawUrl = `https://raw.githubusercontent.com/${REPO_OWNER}/${REPO_NAME}/main/${filePath}`;
+                            resolve(rawUrl);
+                        } else {
+                            reject(data.message || 'فشل الرفع لسيرفر GitHub');
+                        }
+                    } catch (err) {
+                        reject(err);
+                    }
+                };
+                reader.onerror = error => reject(error);
+            });
+        }
+
+        async function handleMultipleImagesUpload(e) {
+            const files = Array.from(e.target.files);
+            if (!files.length) return;
+
+            const status = document.getElementById('uploadStatus');
+            status.style.display = 'block';
+
+            for (const file of files) {
+                try {
+                    const imageUrl = await uploadFileToGitHub(file);
+                    currentUploadedImages.push(imageUrl);
+                    renderFormImagesPreview();
+                } catch (err) {
+                    alert('خطأ أثناء رفع الصورة: ' + err);
+                }
+            }
+            status.style.display = 'none';
+            e.target.value = '';
+        }
+
+        function renderFormImagesPreview() {
+            const grid = document.getElementById('imagesPreviewGrid');
+            grid.innerHTML = currentUploadedImages.map((imgSrc, idx) => `
+                <div class="img-preview-item">
+                    <img src="${imgSrc}" alt="معاينة">
+                    <button type="button" class="remove-btn" onclick="removeImageFromForm(${idx})">&times;</button>
+                </div>
+            `).join('');
+        }
+
+        function removeImageFromForm(index) {
+            currentUploadedImages.splice(index, 1);
+            renderFormImagesPreview();
+        }
 
         function loadLogo() {
             const storedLogo = localStorage.getItem('ascend_logo');
@@ -234,16 +298,17 @@
             }
         }
 
-        function handleLogoUpload(e) {
+        async function handleLogoUpload(e) {
             const file = e.target.files[0];
             if (file) {
-                const reader = new FileReader();
-                reader.onload = function(evt) {
-                    localStorage.setItem('ascend_logo', evt.target.result);
+                try {
+                    const logoUrl = await uploadFileToGitHub(file);
+                    localStorage.setItem('ascend_logo', logoUrl);
                     loadLogo();
-                    alert('تم حفظ الشعار بنجاح في الذاكرة الدائمة!');
+                    alert('تم رفع الشعار وسفظه سحابياً بنجاح!');
+                } catch (err) {
+                    alert('تعذر رفع الشعار: ' + err);
                 }
-                reader.readAsDataURL(file);
             }
         }
 
@@ -281,6 +346,11 @@
                             <div class="property-price">${Number(p.price).toLocaleString()} EGP</div>
                             <div class="property-title">${p.title}</div>
                             <p style="color: var(--text-muted); font-size: 13px;"><i class="fa-solid fa-location-dot"></i> ${p.location}</p>
+                            <p style="color: var(--text-muted); font-size: 12px; margin-top: 8px; display: flex; gap: 10px; align-items: center;">
+                                <span><i class="fa-solid fa-bed" style="color: var(--primary-neon);"></i> ${p.beds || 0} غرف</span> | 
+                                <span><i class="fa-solid fa-bath" style="color: var(--primary-neon);"></i> ${p.baths || 0} حمام</span> | 
+                                <span><i class="fa-solid fa-ruler-combined" style="color: var(--primary-neon);"></i> ${p.area || 0} م²</span>
+                            </p>
                             
                             <div class="card-actions">
                                 <button class="btn-edit" onclick="openModalForEdit(${p.id})"><i class="fa-solid fa-pen-to-square"></i> تعديل</button>
@@ -290,37 +360,6 @@
                     </div>
                 `;
             }).join('');
-        }
-
-        function handleMultipleImagesUpload(e) {
-            const files = Array.from(e.target.files);
-            if (files.length) {
-                let processedCount = 0;
-                files.forEach(file => {
-                    const reader = new FileReader();
-                    reader.onload = function(evt) {
-                        currentUploadedImages.push(evt.target.result);
-                        processedCount++;
-                        if (processedCount === files.length) renderFormImagesPreview();
-                    }
-                    reader.readAsDataURL(file);
-                });
-            }
-        }
-
-        function renderFormImagesPreview() {
-            const grid = document.getElementById('imagesPreviewGrid');
-            grid.innerHTML = currentUploadedImages.map((imgSrc, idx) => `
-                <div class="img-preview-item">
-                    <img src="${imgSrc}" alt="معاينة">
-                    <button type="button" class="remove-btn" onclick="removeImageFromForm(${idx})">&times;</button>
-                </div>
-            `).join('');
-        }
-
-        function removeImageFromForm(index) {
-            currentUploadedImages.splice(index, 1);
-            renderFormImagesPreview();
         }
 
         function openModalForAdd() {
