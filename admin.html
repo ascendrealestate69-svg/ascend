@@ -196,7 +196,7 @@
     </div>
 
     <script>
-        /* التوكين مدمج ومطهر تماماً من الأحرف اللاتينية المفتوحة لتفادي خطأ RequestInit */
+        /* ضع توكين GitHub الجديد بدلاً من النص الموجود أسفله مع التأكد من إزالة أي حروف عربية أو مسافات */
         const GITHUB_TOKEN = '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';
         const REPO_OWNER = 'ascendrealestate69-svg';
         const REPO_NAME = 'ascend';
@@ -208,11 +208,13 @@
             { id: 2, title: 'شقة فاخرة مفروشة بالكامل في كمبوند زايد', price: 9800000, location: 'الشيخ زايد - كمبوند متكامل', type: 'penthouse', beds: 3, baths: 3, area: 210, img: 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80', images: ['https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80'] }
         ];
 
-        /* دالة الرفع المحصنة تلقائياً من الأخطاء مع fallback للـ Base64 لعدم تعطيل الحفظ */
+        /* دالة الرفع الآمنة وتفادي أخطاء الـ Headers */
         async function uploadFileToGitHub(file) {
+            // تنظيف التوكين من الحروف العربية والمسافات الزائدة لتجنب خطأ ISO-8859-1
             const cleanToken = String(GITHUB_TOKEN || '').trim().replace(/[^\x00-\x7F]/g, "");
 
-            if (!cleanToken || cleanToken.length < 10) {
+            // إذا لم يتم استخدام توكين جيت هب صالح، نقوم بتحويل الصورة بأسلوب Base64 محلياً لعدم إيقاف اللوحة
+            if (!cleanToken || cleanToken.includes("ضع_التوكين") || cleanToken.length < 10) {
                 return new Promise((resolve) => {
                     const reader = new FileReader();
                     reader.onload = e => resolve(e.target.result);
@@ -224,7 +226,7 @@
             const fileName = `img_${Date.now()}_${Math.floor(Math.random() * 1000)}.${fileExt}`;
             const filePath = `images/${fileName}`;
 
-            return new Promise((resolve) => {
+            return new Promise((resolve, reject) => {
                 const reader = new FileReader();
                 reader.readAsDataURL(file);
                 reader.onload = async () => {
@@ -248,13 +250,14 @@
                             const rawUrl = `https://raw.githubusercontent.com/${REPO_OWNER}/${REPO_NAME}/main/${filePath}`;
                             resolve(rawUrl);
                         } else {
+                            // في حال الفشل نستخدم Base64 لمنع توقف عملية إضافة العقار
                             resolve(reader.result);
                         }
                     } catch (err) {
                         resolve(reader.result);
                     }
                 };
-                reader.onerror = () => resolve(reader.result);
+                reader.onerror = error => reject(error);
             });
         }
 
