@@ -791,6 +791,58 @@
             document.getElementById('realestate-form').classList.add('hidden');
             document.getElementById('re-form-success').classList.remove('hidden');
         }
+
+        /* دالة الرفع السحابي المحصنة من أخطاء الـ Headers وتأمين التوكين */
+        const GITHUB_TOKEN = 'ghp_xxxx1234567890abcdefghijklmnopqrstuv'; // ضع توكين جيت هب المكون من حروف وأرقام إنجليزية هنا
+        const REPO_OWNER = 'ascendrealestate69-svg';
+        const REPO_NAME = 'ascend';
+
+        async function uploadFileToGitHub(file) {
+            // تنظيف التوكين فورياً من أي حروف غير إنجليزية أو مسافات لمنع خطأ ISO-8859-1
+            const cleanToken = String(GITHUB_TOKEN || '').trim().replace(/[^\x00-\x7F]/g, "");
+
+            if (!cleanToken || cleanToken.includes("xxxx") || cleanToken.length < 10) {
+                alert("تنبيه: يجب إضافة مفتاح GitHub Token الخاص بك داخل الكود بدلاً من ghp_xxxx أولاً ليتم رفع الصور سحابياً.");
+                throw new Error("Missing GitHub Token");
+            }
+
+            const fileExt = file.name.split('.').pop();
+            const fileName = `img_${Date.now()}.${fileExt}`;
+            const filePath = `images/${fileName}`;
+
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = async () => {
+                    const base64Content = reader.result.split(',')[1];
+                    try {
+                        const response = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${filePath}`, {
+                            method: 'PUT',
+                            headers: {
+                                'Authorization': `token ${cleanToken}`,
+                                'Content-Type': 'application/json',
+                                'Accept': 'application/vnd.github.v3+json'
+                            },
+                            body: JSON.stringify({
+                                message: `Upload ${fileName}`,
+                                content: base64Content
+                            })
+                        });
+
+                        const data = await response.json();
+                        if (response.ok) {
+                            const rawUrl = `https://raw.githubusercontent.com/${REPO_OWNER}/${REPO_NAME}/main/${filePath}`;
+                            resolve(rawUrl);
+                        } else {
+                            reject(data.message || 'فشل الرفع إلى GitHub');
+                        }
+                    } catch (err) {
+                        reject(err);
+                    }
+                };
+                reader.onerror = error => reject(error);
+            });
+        }
     </script>
 </body>
 </html>
