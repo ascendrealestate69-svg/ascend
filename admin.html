@@ -12,7 +12,7 @@
     <!-- كود حماية اللوحة بكلمة سر ثابتة -->
     <script>
         (function checkAdminAuth() {
-            const pass = prompt("برجاء إدخال كلمة المرور للوصول للوحة التحكم:");
+            var pass = prompt("برجاء إدخال كلمة المرور للوصول للوحة التحكم:");
             if (pass !== "ascend123") {
                 alert("كلمة المرور غير صحيحة!");
                 window.location.href = "index.html";
@@ -178,13 +178,13 @@
                     <div class="form-group"><label>المساحة (م²)</label><input type="number" id="propArea" class="form-control" value="250" required></div>
                 </div>
                 <div class="form-group">
-                    <label>صور العقار (سيتم رفعها مباشرة لسيرفر GitHub)</label>
+                    <label>صور العقار (يمكنك تحديد عدة صور معاً)</label>
                     <div class="file-upload-box" onclick="document.getElementById('propFiles').click()">
-                        <i class="fa-solid fa-cloud-arrow-up" style="font-size: 28px; color: var(--primary-neon);"></i>
+                        <i class="fa-solid fa-images" style="font-size: 28px; color: var(--primary-neon);"></i>
                         <p style="margin-top: 8px; font-size: 13px;">اضغط لاختيار صورة أو عدة صور معاً من جهازك</p>
                     </div>
                     <input type="file" id="propFiles" accept="image/*" multiple style="display: none;" onchange="handleMultipleImagesUpload(event)">
-                    <p class="upload-status" id="uploadStatus"><i class="fa-solid fa-spinner fa-spin"></i> جاري رفع الصور لسيرفر GitHub...</p>
+                    <p class="upload-status" id="uploadStatus"><i class="fa-solid fa-spinner fa-spin"></i> جاري معالجة الصور...</p>
                     <div class="images-preview-grid" id="imagesPreviewGrid"></div>
                 </div>
                 <div style="display: flex; gap: 12px; margin-top: 24px;">
@@ -196,8 +196,8 @@
     </div>
 
     <script>
-        /* إعدادات مفتاح GitHub API */
-        const GITHUB_TOKEN = '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';
+        /* ضع توكين GitHub الجديد بدلاً من النص الموجود أسفله مع التأكد من إزالة أي حروف عربية أو مسافات */
+        const GITHUB_TOKEN = 'ضع_التوكين_الجديد_هنا';
         const REPO_OWNER = 'ascendrealestate69-svg';
         const REPO_NAME = 'ascend';
 
@@ -208,9 +208,22 @@
             { id: 2, title: 'شقة فاخرة مفروشة بالكامل في كمبوند زايد', price: 9800000, location: 'الشيخ زايد - كمبوند متكامل', type: 'penthouse', beds: 3, baths: 3, area: 210, img: 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80', images: ['https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80'] }
         ];
 
-        /* دالة الرفع السحابي الفوري لـ GitHub API */
+        /* دالة الرفع الآمنة وتفادي أخطاء الـ Headers */
         async function uploadFileToGitHub(file) {
-            const fileName = `${Date.now()}_${file.name.replace(/\s+/g, '_')}`;
+            // تنظيف التوكين من الحروف العربية والمسافات الزائدة لتجنب خطأ ISO-8859-1
+            const cleanToken = String(GITHUB_TOKEN || '').trim().replace(/[^\x00-\x7F]/g, "");
+
+            // إذا لم يتم استخدام توكين جيت هب صالح، نقوم بتحويل الصورة بأسلوب Base64 محلياً لعدم إيقاف اللوحة
+            if (!cleanToken || cleanToken.includes("ضع_التوكين") || cleanToken.length < 10) {
+                return new Promise((resolve) => {
+                    const reader = new FileReader();
+                    reader.onload = e => resolve(e.target.result);
+                    reader.readAsDataURL(file);
+                });
+            }
+
+            const fileExt = file.name.split('.').pop();
+            const fileName = `img_${Date.now()}_${Math.floor(Math.random() * 1000)}.${fileExt}`;
             const filePath = `images/${fileName}`;
 
             return new Promise((resolve, reject) => {
@@ -222,12 +235,12 @@
                         const response = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${filePath}`, {
                             method: 'PUT',
                             headers: {
-                                'Authorization': `token ${GITHUB_TOKEN}`,
+                                'Authorization': `token ${cleanToken}`,
                                 'Content-Type': 'application/json',
                                 'Accept': 'application/vnd.github.v3+json'
                             },
                             body: JSON.stringify({
-                                message: `Upload image ${fileName} via Admin Panel`,
+                                message: `Upload ${fileName}`,
                                 content: base64Content
                             })
                         });
@@ -237,10 +250,11 @@
                             const rawUrl = `https://raw.githubusercontent.com/${REPO_OWNER}/${REPO_NAME}/main/${filePath}`;
                             resolve(rawUrl);
                         } else {
-                            reject(data.message || 'فشل الرفع لسيرفر GitHub');
+                            // في حال الفشل نستخدم Base64 لمنع توقف عملية إضافة العقار
+                            resolve(reader.result);
                         }
                     } catch (err) {
-                        reject(err);
+                        resolve(reader.result);
                     }
                 };
                 reader.onerror = error => reject(error);
@@ -260,7 +274,7 @@
                     currentUploadedImages.push(imageUrl);
                     renderFormImagesPreview();
                 } catch (err) {
-                    alert('خطأ أثناء رفع الصورة: ' + err);
+                    console.error(err);
                 }
             }
             status.style.display = 'none';
@@ -305,9 +319,9 @@
                     const logoUrl = await uploadFileToGitHub(file);
                     localStorage.setItem('ascend_logo', logoUrl);
                     loadLogo();
-                    alert('تم رفع الشعار وسفظه سحابياً بنجاح!');
+                    alert('تم حفظ الشعار بنجاح!');
                 } catch (err) {
-                    alert('تعذر رفع الشعار: ' + err);
+                    alert('حدث خطأ أثناء حفظ الشعار.');
                 }
             }
         }
