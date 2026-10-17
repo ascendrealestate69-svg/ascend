@@ -3,9 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ascend Real Estate | الوساطة والعقارات الفاخرة</title>
+    
+    <!-- 1. أوساط SEO والكلمات المفتاحية الأساسية -->
+    <title>Ascend Real Estate | شقق وفلل للبيع في التجمع والشيخ زايد والعاصمة</title>
+    <meta name="description" content="شركة Ascend للوساطة والعقارات الفاخرة. استكشف أرقى الشقق، الفلل، والمكاتب الإدارية للبيع بالتقسيط المريح في التجمع الخامس، الشيخ زايد، والعاصمة الإدارية.">
+    <meta name="keywords" content="عقارات للبيع في مصر, شقق التجمع الخامس, فلل للبيع بالشيخ زايد, عقارات العاصمة الإدارية, شاليهات الساحل الشمالي, مكاتب إدارية للبيع, Ascend Real Estate, شقق بالتقسيط">
+    <meta name="author" content="Ascend Real Estate">
+    <meta name="robots" content="index, follow">
 
-    <!-- 1. إضافة أيكونة المتصفح (Favicon) -->
+    <!-- 2. أوساط المعاينة في منصات التواصل الاجتماعي (Open Graph / Social Sharing) -->
+    <meta property="og:title" content="Ascend Real Estate | الوساطة والعقارات الفاخرة">
+    <meta property="og:description" content="أفضل الفرص العقارية السكنية والاستثمارية في أرقى كمبوندات مصر مع تسهيلات سداد مخصصة.">
+    <meta property="og:url" content="https://ascendrealestate69-svg.github.io/ascend/">
+    <meta property="og:type" content="website">
+    <meta property="og:image" content="https://ascendrealestate69-svg.github.io/ascend/favicon.png">
+
+    <!-- 3. إضافة أيكونة المتصفح (Favicon) -->
     <link rel="icon" type="image/png" href="favicon.png">
     <link rel="apple-touch-icon" href="favicon.png">
 
@@ -106,8 +119,7 @@
                 <!-- Ascend Real Estate Logo -->
                 <div class="flex items-center" id="mainHeaderLogo">
                     <a href="#" class="flex items-center gap-3 group">
-                        <!-- 2. استبدال الـ SVG بصورة الشعار الحقيقية -->
-                        <img src="favicon.png" alt="Ascend Real Estate Logo" class="w-10 h-10 object-contain transition-transform group-hover:scale-105">
+                        <img src="favicon.png" alt="Ascend Real Estate Logo - الوساطة والعقارات الفاخرة" class="w-10 h-10 object-contain transition-transform group-hover:scale-105">
                         <div class="flex flex-col">
                             <span class="font-inter font-extrabold text-2xl tracking-tight text-white leading-none">
                                 ascend
@@ -485,7 +497,7 @@
                 <i class="fas fa-chevron-left"></i>
             </button>
 
-            <img id="gallery-active-img" src="" class="max-h-[75vh] max-w-full object-contain rounded-2xl border border-ascend-cardBorder shadow-2xl" alt="معرض صور العقار">
+            <img id="gallery-active-img" src="" class="max-h-[75vh] max-w-full object-contain rounded-2xl border border-ascend-cardBorder shadow-2xl" alt="معرض صور العقارات والوحدات الفاخرة">
 
             <button onclick="nextGalleryImg()" class="absolute right-2 sm:right-4 z-10 w-12 h-12 rounded-full glass-panel text-white hover:text-ascend-green flex items-center justify-center text-xl transition">
                 <i class="fas fa-chevron-right"></i>
@@ -504,7 +516,7 @@
                         <span class="font-inter font-extrabold text-2xl tracking-tight text-white">ascend<span class="text-ascend-green">.</span></span>
                     </div>
                     <p class="text-sm text-ascend-muted leading-relaxed max-w-md">
-                        الوسيط العقاري المفضل للعقارات والمشاريع السكنية والتجارية الفاخرة.
+                        الوسيط العقاري المفضل للعقارات والمشاريع السكنية والتجارية الفاخرة في القاهرة الجديدة والشيخ زايد والعاصمة الإدارية.
                     </p>
                 </div>
 
@@ -537,12 +549,12 @@
     <!-- JavaScript Logic & GitHub Upload Handler -->
     <script>
         const defaultProperties = [
-            { id: 1, title: 'فيلا مستقلة بإطلالة مباشرة على الجولف', city: 'القاهرة الجديدة', type: 'فيلا', price: 28500000, priceText: '28,500,000 ج.م', action: 'buy', beds: 5, baths: 6, area: 580, img: 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=800&q=80', images: ['https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=800&q=80'] },
-            { id: 2, title: 'شقة فاخرة مفروشة بالكامل في كمبوند زايد', city: 'الشيخ زايد', type: 'شقة', price: 9800000, priceText: '9,800,000 ج.م', action: 'buy', beds: 3, baths: 3, area: 210, img: 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80', images: ['https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80'] },
-            { id: 3, title: 'مكتب إداري بالتشطيب الكامل بمنطقة الأعمال', city: 'العاصمة الإدارية', type: 'مكتب', price: 6500000, priceText: '6,500,000 ج.م', action: 'buy', beds: 2, baths: 2, area: 125, img: 'https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=800&q=80', images: ['https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=800&q=80'] },
-            { id: 4, title: 'شالية صف أول على البحر في أفضل قرى الساحل', city: 'الساحل الشمالي', type: 'شقة', price: 14200000, priceText: '14,200,000 ج.م', action: 'buy', beds: 3, baths: 2, area: 160, img: 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=800&q=80', images: ['https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=800&q=80'] },
-            { id: 5, title: 'تاون هاوس استلام فوري بتقسيط مريح', city: 'القاهرة الجديدة', type: 'فيلا', price: 16500000, priceText: '16,500,000 ج.م', action: 'buy', beds: 4, baths: 4, area: 340, img: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=800&q=80', images: ['https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=800&q=80'] },
-            { id: 6, title: 'بنتهاوس مودرن مع حمام سباحة خاص (للإيجار)', city: 'الشيخ زايد', type: 'شقة', price: 85000, priceText: '85,000 ج.م / شهرياً', action: 'rent', beds: 4, baths: 4, area: 310, img: 'https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?auto=format&fit=crop&w=800&q=80', images: ['https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?auto=format&fit=crop&w=800&q=80'] }
+            { id: 1, title: 'فيلا مستقلة بإطلالة مباشرة على الجولف للبيع في التجمع', city: 'القاهرة الجديدة', type: 'فيلا', price: 28500000, priceText: '28,500,000 ج.م', action: 'buy', beds: 5, baths: 6, area: 580, img: 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=800&q=80', images: ['https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=800&q=80'] },
+            { id: 2, title: 'شقة فاخرة مفروشة بالكامل للبيع في كمبوند زايد', city: 'الشيخ زايد', type: 'شقة', price: 9800000, priceText: '9,800,000 ج.م', action: 'buy', beds: 3, baths: 3, area: 210, img: 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80', images: ['https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80'] },
+            { id: 3, title: 'مكتب إداري للبيع بالتشطيب الكامل بمنطقة الأعمال', city: 'العاصمة الإدارية', type: 'مكتب', price: 6500000, priceText: '6,500,000 ج.م', action: 'buy', beds: 2, baths: 2, area: 125, img: 'https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=800&q=80', images: ['https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=800&q=80'] },
+            { id: 4, title: 'شالية للبيع صف أول على البحر في الساحل الشمالي', city: 'الساحل الشمالي', type: 'شقة', price: 14200000, priceText: '14,200,000 ج.م', action: 'buy', beds: 3, baths: 2, area: 160, img: 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=800&q=80', images: ['https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=800&q=80'] },
+            { id: 5, title: 'تاون هاوس استلام فوري بتقسيط مريح في القاهرة الجديدة', city: 'القاهرة الجديدة', type: 'فيلا', price: 16500000, priceText: '16,500,000 ج.م', action: 'buy', beds: 4, baths: 4, area: 340, img: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=800&q=80', images: ['https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=800&q=80'] },
+            { id: 6, title: 'بنتهاوس مودرن مع حمام سباحة خاص للإيجار بالشيخ زايد', city: 'الشيخ زايد', type: 'شقة', price: 85000, priceText: '85,000 ج.م / شهرياً', action: 'rent', beds: 4, baths: 4, area: 310, img: 'https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?auto=format&fit=crop&w=800&q=80', images: ['https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?auto=format&fit=crop&w=800&q=80'] }
         ];
 
         let favorites = [];
@@ -780,10 +792,10 @@
             document.getElementById('re-form-success').classList.remove('hidden');
         }
 
-        /* 3. دالة رفع الصور المباشرة إلى GitHub API لاستخدامها في لوحة الأدمن */
+        /* دالة رفع الصور المباشرة إلى GitHub API */
         const GITHUB_TOKEN = 'ضع_ال_TOKEN_الخاص_بجيت_هب_هنا';
-        const REPO_OWNER = 'ascendrealestate-dot';
-        const REPO_NAME = 'acsendrs';
+        const REPO_OWNER = 'ascendrealestate69-svg';
+        const REPO_NAME = 'ascend';
 
         async function uploadImageToGitHub(file) {
             const fileName = `${Date.now()}_${file.name.replace(/\s+/g, '_')}`;
