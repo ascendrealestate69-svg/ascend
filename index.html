@@ -454,8 +454,8 @@
                         <div class="w-16 h-16 rounded-full bg-ascend-green/20 text-ascend-green mx-auto flex items-center justify-center text-3xl">
                             <i class="fas fa-circle-check"></i>
                         </div>
-                        <h3 class="text-2xl font-bold text-white">تم استلام طلبك بنجاح!</h3>
-                        <p class="text-ascend-muted text-sm leading-[1.7]">سيتواصل معك أحد مستشارينا العقاريين المختصين بالمنطقة المطلوبة خلال أقل من ساعتين.</p>
+                        <h3 class="text-2xl font-bold text-white">أكمل إرسال طلبك عبر واتساب</h3>
+                        <p class="text-ascend-muted text-sm leading-[1.7]">لم يُرسل الطلب بعد. أرسل الرسالة التي فُتحت في واتساب للتواصل مع فريقنا.</p>
                     </div>
                 </div>
 
@@ -535,7 +535,6 @@
     </footer>
 
     <!-- JavaScript Logic -->
-    <script src="api-config.js"></script>
     <script>
         const defaultProperties = [
             { id: 1, title: 'فيلا مستقلة بإطلالة مباشرة على الجولف', city: 'القاهرة الجديدة', type: 'فيلا', price: 28500000, priceText: '28,500,000 ج.م', action: 'buy', beds: 5, baths: 6, area: 580, img: 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=800&q=80', images: ['https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=800&q=80'] },
@@ -550,9 +549,10 @@
         let searchActionType = 'buy';
         let activeGalleryImages = [];
         let activeGalleryIndex = 0;
-        const API_BASE_URL = String(window.ASCEND_API_URL || '').replace(/\/+$/, '');
+        const LOCAL_SITE_DATA_KEY = 'ascend_local_site_data';
 
         async function loadSiteData() {
+            if (localStorage.getItem(LOCAL_SITE_DATA_KEY) === 'true') return;
             try {
                 const [propertiesResponse, logoResponse] = await Promise.all([
                     fetch('properties.json', { cache: 'no-store' }),
@@ -814,18 +814,20 @@
             const area = document.getElementById('leadArea').value;
 
             try {
-                if (!API_BASE_URL) throw new Error('خدمة استقبال الطلبات غير مضبوطة بعد.');
-                const response = await fetch(`${API_BASE_URL}/api/leads`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ name, phone, type, area })
-                });
-                const result = await response.json().catch(() => ({}));
-                if (!response.ok) throw new Error(result.error || 'تعذر إرسال الطلب.');
+                const message = [
+                    'طلب استشارة عقارية من موقع Ascend',
+                    `الاسم: ${name}`,
+                    `الهاتف: ${phone}`,
+                    `الهدف: ${type}`,
+                    `المنطقة: ${area}`
+                ].join('\n');
+                const whatsappWindow = window.open(`https://wa.me/201004104887?text=${encodeURIComponent(message)}`, '_blank');
+                if (!whatsappWindow) throw new Error('اسمح بفتح النوافذ المنبثقة لإرسال طلبك عبر واتساب.');
+                whatsappWindow.opener = null;
                 document.getElementById('realestate-form').classList.add('hidden');
                 document.getElementById('re-form-success').classList.remove('hidden');
             } catch (error) {
-                alert(error.message);
+                alert(error.message || 'Could not open WhatsApp to send your request.');
             }
         }
     </script>
