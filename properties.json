@@ -1,0 +1,80 @@
+[
+  {
+    "id": 1,
+    "title": "فيلا مستقلة بإطلالة مباشرة على الجولف",
+    "price": 28500000,
+    "location": "القاهرة الجديدة - التجمع الخامس",
+    "type": "villa",
+    "action": "buy",
+    "beds": 5,
+    "baths": 6,
+    "area": 580,
+    "img": "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=800&q=80",
+    "images": ["https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=800&q=80"]
+  },
+  {
+    "id": 2,
+    "title": "شقة فاخرة مفروشة بالكامل في كمبوند زايد",
+    "price": 9800000,
+    "location": "الشيخ زايد - كمبوند متكامل",
+    "type": "penthouse",
+    "action": "buy",
+    "beds": 3,
+    "baths": 3,
+    "area": 210,
+    "img": "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80",
+    "images": ["https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80"]
+  },
+  {
+    "id": 3,
+    "title": "مكتب إداري بالتشطيب الكامل بمنطقة الأعمال",
+    "price": 6500000,
+    "location": "العاصمة الإدارية",
+    "type": "office",
+    "action": "buy",
+    "beds": 2,
+    "baths": 2,
+    "area": 125,
+    "img": "https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=800&q=80",
+    "images": ["https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=800&q=80"]
+  },
+  {
+    "id": 4,
+    "title": "شالية صف أول على البحر في أفضل قرى الساحل",
+    "price": 14200000,
+    "location": "الساحل الشمالي",
+    "type": "apartment",
+    "action": "buy",
+    "beds": 3,
+    "baths": 2,
+    "area": 160,
+    "img": "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=800&q=80",
+    "images": ["https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=800&q=80"]
+  },
+  {
+    "id": 5,
+    "title": "تاون هاوس استلام فوري بتقسيط مريح",
+    "price": 16500000,
+    "location": "القاهرة الجديدة",
+    "type": "villa",
+    "action": "buy",
+    "beds": 4,
+    "baths": 4,
+    "area": 340,
+    "img": "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=800&q=80",
+    "images": ["https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=800&q=80"]
+  },
+  {
+    "id": 6,
+    "title": "بنتهاوس مودرن مع حمام سباحة خاص (للإيجار)",
+    "price": 85000,
+    "location": "الشيخ زايد",
+    "type": "penthouse",
+    "action": "rent",
+    "beds": 4,
+    "baths": 4,
+    "area": 310,
+    "img": "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?auto=format&fit=crop&w=800&q=80",
+    "images": ["https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?auto=format&fit=crop&w=800&q=80"]
+  }
+]
