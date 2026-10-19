@@ -351,7 +351,7 @@
 
         async function initializeAdmin() {
             const savedProperties = JSON.parse(localStorage.getItem('ascend_properties') || 'null');
-            const hasAdminEdits = Array.isArray(savedProperties)
+            const hasAdminEdits = Array.isArray(savedProperties) && savedProperties.length > 0
                 && savedProperties.every(property => property && typeof property.location === 'string');
             if (localStorage.getItem(LOCAL_SITE_DATA_KEY) !== 'true' && hasAdminEdits) {
                 localStorage.setItem(LOCAL_SITE_DATA_KEY, 'true');
@@ -521,9 +521,9 @@
                 saveLocalSiteData(properties);
                 closeModal();
                 renderProperties();
-                alert(editId ? 'Changes saved locally in this browser.' : 'Property saved locally in this browser.');
+                alert(editId ? 'تم حفظ التعديلات محليًا في هذا المتصفح.' : 'تمت إضافة العقار محليًا في هذا المتصفح.');
             } catch (err) {
-                alert(Could not save locally: ${err.message});
+                alert(`تعذر الحفظ المحلي: ${err.message}`);
             } finally {
                 saveBtn.disabled = false;
                 saveBtn.innerText = document.getElementById('editPropId').value ? 'حفظ التعديلات' : 'حفظ العقار';
