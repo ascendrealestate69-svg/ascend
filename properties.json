@@ -1,0 +1,30 @@
+[
+  {
+    "id": 1,
+    "title": "فيلا فاخرة بتصميم مودرن وحمام سباحة",
+    "price": 28500000,
+    "location": "القاهرة الجديدة - التجمع الخامس",
+    "type": "villa",
+    "beds": 5,
+    "baths": 6,
+    "area": 580,
+    "img": "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=800&q=80",
+    "images": [
+      "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=800&q=80"
+    ]
+  },
+  {
+    "id": 2,
+    "title": "شقة فاخرة مفروشة بالكامل في كمبوند زايد",
+    "price": 9800000,
+    "location": "الشيخ زايد - كمبوند متكامل",
+    "type": "penthouse",
+    "beds": 3,
+    "baths": 3,
+    "area": 210,
+    "img": "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80",
+    "images": [
+      "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80"
+    ]
+  }
+]
