@@ -2,53 +2,23 @@
 
 الموقع ثابت، لذلك لا يمكن حفظ التعديلات العامة بأمان من المتصفح وحده. يستخدم هذا المشروع Cloudflare Worker لحماية كلمة مرور الإدارة ومفتاح GitHub، ويستخدم Cloudflare D1 لحفظ طلبات العملاء بشكل خاص.
 
-## المتطلبات
+## نشر خدمة الإدارة تلقائيًا من GitHub
 
-- حساب Cloudflare وNode.js مع npm.
-- مستودع GitHub `ascendrealestate69-svg/ascend` والفرع `main`، أو تعديل قيم المستودع في `worker/wrangler.toml`.
-- مفتاح GitHub Fine-grained مخصص لهذا المستودع فقط، بصلاحية `Contents: Read and write`. لا تضع المفتاح في ملفات الموقع أو ترسله في المحادثات.
+لا تحتاج إلى نقل DNS أو استخدام Cloudflare لإدارة النطاق: النشر يستخدم عنوان `workers.dev`، بينما يبقى الموقع والدومين على GitHub Pages. أضفت workflow ينشئ قاعدة D1، يطبق migration، ينشر Worker، ثم يحدّث `api-config.js` تلقائيًا.
 
-## نشر خدمة الإدارة
+1. تحتاج إلى حساب Cloudflare، وCloudflare API Token يسمح بإدارة Workers وD1، وAccount ID من لوحة Cloudflare. كما تحتاج إلى GitHub Fine-grained token محدود بالمستودع `ascendrealestate69-svg/ascend` وصلاحية `Contents: Read and write`. لا ترسل هذه القيم في المحادثات.
+2. من المستودع على GitHub، افتح **Settings → Secrets and variables → Actions → New repository secret**، وأضف الأسرار التالية:
 
-1. من الطرفية، انتقل إلى مجلد `worker` وسجّل الدخول إلى Cloudflare:
+   | الاسم | القيمة |
+   | --- | --- |
+   | `CLOUDFLARE_API_TOKEN` | Cloudflare API Token |
+   | `CLOUDFLARE_ACCOUNT_ID` | Cloudflare Account ID |
+   | `ASCEND_CONTENTS_TOKEN` | GitHub Fine-grained token للمستودع |
+   | `ASCEND_ADMIN_PASSWORD` | كلمة مرور إدارة قوية وفريدة |
 
-   ```powershell
-   cd worker
-   npx wrangler login
-   npx wrangler d1 create ascend-leads
-   ```
+3. شغّل workflow **Deploy admin API** من تبويب **Actions** باستخدام **Run workflow** على الفرع `main`.
+4. بعد نجاح التشغيل، انتظر اكتمال نشر GitHub Pages، ثم افتح `https://ascendrealestates.com/admin.html`.
 
-2. انسخ `database_id` الذي يظهر في نتيجة الأمر إلى `database_id` في `wrangler.toml` بدل `REPLACE_WITH_D1_DATABASE_ID`.
+الـworkflow لا يقرأ الأسرار أو يطبعها في السجلات؛ تُخزَّن كلمة المرور ومفتاح المستودع كأسرار داخل Cloudflare Worker. تقيّد CORS الطلبات على نطاقي الموقع المحددين في `worker/wrangler.toml`.
 
-3. أنشئ جدول الطلبات في قاعدة D1:
-
-   ```powershell
-   npx wrangler d1 migrations apply ascend-leads --remote
-   ```
-
-4. أضف المفتاح وكلمة مرور قوية كأسرار في Cloudflare. أدخل القيم في الطرفية عند الطلب فقط:
-
-   ```powershell
-   npx wrangler secret put GITHUB_TOKEN
-   npx wrangler secret put ADMIN_PASSWORD
-   ```
-
-5. انشر الـ Worker:
-
-   ```powershell
-   npx wrangler deploy
-   ```
-
-   سيظهر عنوان خدمة ينتهي بـ `workers.dev`.
-
-## ربط الموقع
-
-ضع عنوان الـ Worker المنشور في `api-config.js`، مع إبقاء الشرطة المائلة الأخيرة اختيارية:
-
-```js
-window.ASCEND_API_URL = 'https://اسم-الخدمة.اسم-الحساب.workers.dev';
-```
-
-انشر ملفات الموقع مجددًا على GitHub Pages. تأكد أن عنوان الموقع الفعلي موجود في `ALLOWED_ORIGINS` داخل `worker/wrangler.toml`؛ القيم الافتراضية تسمح بالنطاقين `ascendrealestates.com` و`www.ascendrealestates.com` فقط. إذا كان الموقع يستخدم نطاقًا مختلفًا، حدّث القائمة ثم أعد نشر الـ Worker.
-
-بعد اكتمال الإعداد، افتح `admin.html`، وسجّل الدخول بكلمة مرور `ADMIN_PASSWORD` التي أضفتها. إدارة العقارات والشعار تحفظ تغييراتها في ملفات المستودع، وطلبات العملاء تظهر في لوحة الإدارة وتُحفظ في D1، لا في مستودع عام.
+بعد اكتمال الإعداد، افتح لوحة الإدارة وسجّل الدخول بكلمة المرور التي أضفتها. إدارة العقارات والشعار تحفظ تغييراتها في ملفات المستودع، وطلبات العملاء تظهر في اللوحة وتُحفظ في D1، لا في مستودع عام.
