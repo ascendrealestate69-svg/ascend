@@ -2,7 +2,7 @@
   {
     "id": 1,
     "title": "فيلا مستقلة بإطلالة مباشرة على الجولف",
-    "price": 28500000,
+    "price": 30000000,
     "location": "القاهرة الجديدة - التجمع الخامس",
     "type": "villa",
     "action": "buy",
@@ -10,7 +10,9 @@
     "baths": 6,
     "area": 580,
     "img": "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=800&q=80",
-    "images": ["https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=800&q=80"]
+    "images": [
+      "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=800&q=80"
+    ]
   },
   {
     "id": 2,
@@ -23,7 +25,9 @@
     "baths": 3,
     "area": 210,
     "img": "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80",
-    "images": ["https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80"]
+    "images": [
+      "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80"
+    ]
   },
   {
     "id": 3,
@@ -36,7 +40,9 @@
     "baths": 2,
     "area": 125,
     "img": "https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=800&q=80",
-    "images": ["https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=800&q=80"]
+    "images": [
+      "https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=800&q=80"
+    ]
   },
   {
     "id": 4,
@@ -49,7 +55,9 @@
     "baths": 2,
     "area": 160,
     "img": "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=800&q=80",
-    "images": ["https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=800&q=80"]
+    "images": [
+      "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=800&q=80"
+    ]
   },
   {
     "id": 5,
@@ -62,7 +70,9 @@
     "baths": 4,
     "area": 340,
     "img": "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=800&q=80",
-    "images": ["https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=800&q=80"]
+    "images": [
+      "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=800&q=80"
+    ]
   },
   {
     "id": 6,
@@ -75,6 +85,8 @@
     "baths": 4,
     "area": 310,
     "img": "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?auto=format&fit=crop&w=800&q=80",
-    "images": ["https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?auto=format&fit=crop&w=800&q=80"]
+    "images": [
+      "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?auto=format&fit=crop&w=800&q=80"
+    ]
   }
 ]
