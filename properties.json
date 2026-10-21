@@ -28,20 +28,5 @@
     "images": [
       "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80"
     ]
-  },
-  {
-    "id": 6,
-    "title": "بنتهاوس مودرن مع حمام سباحة خاص (للإيجار)",
-    "price": 85000,
-    "location": "الشيخ زايد",
-    "type": "penthouse",
-    "action": "rent",
-    "beds": 4,
-    "baths": 4,
-    "area": 310,
-    "img": "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?auto=format&fit=crop&w=800&q=80",
-    "images": [
-      "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?auto=format&fit=crop&w=800&q=80"
-    ]
   }
 ]
