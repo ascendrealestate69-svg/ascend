@@ -30,21 +30,6 @@
     ]
   },
   {
-    "id": 5,
-    "title": "تاون هاوس استلام فوري بتقسيط مريح",
-    "price": 16500000,
-    "location": "القاهرة الجديدة",
-    "type": "villa",
-    "action": "buy",
-    "beds": 4,
-    "baths": 4,
-    "area": 340,
-    "img": "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=800&q=80",
-    "images": [
-      "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=800&q=80"
-    ]
-  },
-  {
     "id": 6,
     "title": "بنتهاوس مودرن مع حمام سباحة خاص (للإيجار)",
     "price": 85000,
