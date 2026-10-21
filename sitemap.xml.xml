@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+
+  <!-- الصفحة الرئيسية -->
+  <url>
+    <loc>https://yourwebsite.com/</loc>
+    <lastmod>2026-10-22</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>1.0</priority>
+  </url>
+
+  <!-- صفحة مشروع ماونتن فيو 1.1 الرئيسية -->
+  <url>
+    <loc>https://yourwebsite.com/mountain-view-1-1</loc>
+    <lastmod>2026-10-22</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <!-- شقق المينيمنال - استلام 6 أشهر -->
+  <url>
+    <loc>https://yourwebsite.com/mountain-view-1-1/millennial-apartments</loc>
+    <lastmod>2026-10-22</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- آي فيلا (iVilla) - استلام فوري و 6 أشهر -->
+  <url>
+    <loc>https://yourwebsite.com/mountain-view-1-1/ivilla</loc>
+    <lastmod>2026-10-22</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- تاون هاوس - استلام فوري -->
+  <url>
+    <loc>https://yourwebsite.com/mountain-view-1-1/townhouse</loc>
+    <lastmod>2026-10-22</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- الفيلات المستقلة و Crown Palace - استلام فوري -->
+  <url>
+    <loc>https://yourwebsite.com/mountain-view-1-1/standalone-villas</loc>
+    <lastmod>2026-10-22</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+</urlset>
