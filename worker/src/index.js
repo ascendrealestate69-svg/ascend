@@ -163,6 +163,7 @@ function validateProperties(properties) {
         if (!Number.isSafeInteger(property.id) || ids.has(property.id)) return 'Each property needs a unique integer id.';
         ids.add(property.id);
         if (typeof property.title !== 'string' || !property.title.trim() || property.title.length > 200) return 'Property title is invalid.';
+        if (property.description !== undefined && (typeof property.description !== 'string' || property.description.length > 5000)) return 'Property description is invalid.';
         if (typeof property.location !== 'string' || !property.location.trim() || property.location.length > 200) return 'Property location is invalid.';
         if (!Number.isFinite(property.price) || property.price <= 0) return 'Property price is invalid.';
         if (![property.beds, property.baths, property.area].every(value => Number.isFinite(value) && value >= 0)) return 'Property dimensions are invalid.';

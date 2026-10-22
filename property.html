@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="تفاصيل العقار من Ascend Real Estate">
+    <link rel="icon" type="image/png" sizes="512x512" href="/favicon.png?v=2">
+    <link rel="apple-touch-icon" href="/favicon.png?v=2">
+    <title>تفاصيل العقار | Ascend Real Estate</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        ascend: {
+                            green: '#34FE71',
+                            greenHover: '#22C55E',
+                            dark: '#0E1217',
+                            card: '#161B22',
+                            cardBorder: '#21262D',
+                            accent: '#1C2128',
+                            muted: '#8B949E'
+                        }
+                    },
+                    fontFamily: { sans: ['Cairo', 'sans-serif'] }
+                }
+            }
+        };
+    </script>
+    <style>
+        body { background: #0E1217; color: #fff; font-family: 'Cairo', sans-serif; }
+    </style>
+</head>
+<body class="min-h-screen">
+    <header class="sticky top-0 z-10 border-b border-ascend-cardBorder bg-ascend-dark/95 backdrop-blur">
+        <div class="mx-auto flex h-20 max-w-6xl items-center justify-between px-4">
+            <a href="index.html" class="text-2xl font-extrabold text-white">ascend<span class="text-ascend-green">.</span></a>
+            <a href="index.html#properties" class="rounded-xl border border-ascend-cardBorder px-4 py-2 text-sm text-white transition hover:border-ascend-green hover:text-ascend-green">
+                <i class="fas fa-arrow-right ml-1"></i> العودة للعقارات
+            </a>
+        </div>
+    </header>
+
+    <main id="property-content" class="mx-auto max-w-6xl px-4 py-10 sm:py-14">
+        <p id="property-status" class="rounded-2xl border border-ascend-cardBorder bg-ascend-card p-6 text-center text-ascend-muted">جاري تحميل تفاصيل العقار...</p>
+    </main>
+
+    <script>
+        function escapeHtml(value) {
+            return String(value ?? '').replace(/[&<>"']/g, character => ({
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                '"': '&quot;',
+                "'": '&#39;'
+            })[character]);
+        }
+
+        function propertyImages(property) {
+            const images = Array.isArray(property.images) && property.images.length
+                ? property.images
+                : [property.img || property.imageUrl];
+            return images.filter(image => typeof image === 'string' && image);
+        }
+
+        function renderProperty(property) {
+            const images = propertyImages(property);
+            if (!images.length) throw new Error('صور العقار غير متاحة.');
+
+            const price = Number(property.price).toLocaleString('ar-EG') + ' ج.م' + (property.action === 'rent' ? ' / شهرياً' : '');
+            const description = typeof property.description === 'string' && property.description.trim()
+                ? property.description.trim()
+                : 'لم تتم إضافة وصف لهذا العقار بعد.';
+            const details = [
+                ['fa-location-dot', 'الموقع', property.location || property.city || 'غير محدد'],
+                ['fa-bed', 'غرف النوم', property.beds ?? 0],
+                ['fa-bath', 'الحمامات', property.baths ?? 0],
+                ['fa-vector-square', 'المساحة', `${property.area ?? 0} م²`]
+            ];
+
+            document.title = `${property.title} | Ascend Real Estate`;
+            document.querySelector('meta[name="description"]').content = description.slice(0, 160);
+            document.getElementById('property-content').innerHTML = `
+                <div class="grid gap-8 lg:grid-cols-[1.2fr_0.8fr]">
+                    <section>
+                        <img id="main-property-image" src="${escapeHtml(images[0])}" alt="${escapeHtml(property.title)}" class="h-72 w-full rounded-3xl border border-ascend-cardBorder object-cover sm:h-[480px]">
+                        ${images.length > 1 ? `
+                            <div class="mt-4 grid grid-cols-4 gap-3 sm:grid-cols-6">
+                                ${images.map((image, index) => `
+                                    <button type="button" data-image-index="${index}" class="property-thumbnail overflow-hidden rounded-xl border border-ascend-cardBorder focus:border-ascend-green" aria-label="عرض الصورة ${index + 1}">
+                                        <img src="${escapeHtml(image)}" alt="" class="h-20 w-full object-cover">
+                                    </button>
+                                `).join('')}
+                            </div>
+                        ` : ''}
+                    </section>
+                    <section class="glass-card rounded-3xl border border-ascend-cardBorder bg-ascend-card p-6 sm:p-8">
+                        <p class="mb-3 text-sm font-bold text-ascend-green">${escapeHtml(property.location || property.city || '')}</p>
+                        <h1 class="text-2xl font-extrabold leading-relaxed sm:text-3xl">${escapeHtml(property.title)}</h1>
+                        <p class="mt-4 text-2xl font-black text-ascend-green">${escapeHtml(price)}</p>
+                        <div class="mt-6 grid grid-cols-2 gap-3">
+                            ${details.map(([icon, label, value]) => `
+                                <div class="rounded-xl border border-ascend-cardBorder bg-ascend-accent p-4">
+                                    <p class="text-xs text-ascend-muted"><i class="fas ${icon} ml-1 text-ascend-green"></i>${label}</p>
+                                    <p class="mt-1 font-bold">${escapeHtml(value)}</p>
+                                </div>
+                            `).join('')}
+                        </div>
+                        <div class="mt-7 border-t border-ascend-cardBorder pt-6">
+                            <h2 class="mb-3 text-xl font-bold">وصف العقار</h2>
+                            <p class="whitespace-pre-line leading-8 text-gray-300">${escapeHtml(description)}</p>
+                        </div>
+                        <a href="index.html#contact" class="mt-7 flex w-full items-center justify-center gap-2 rounded-xl bg-ascend-green px-5 py-3 font-bold text-black transition hover:bg-ascend-greenHover">
+                            <i class="fas fa-phone"></i> استفسر عن العقار
+                        </a>
+                    </section>
+                </div>
+            `;
+            document.querySelectorAll('.property-thumbnail').forEach(button => {
+                button.addEventListener('click', () => {
+                    document.getElementById('main-property-image').src = images[Number(button.dataset.imageIndex)];
+                });
+            });
+        }
+
+        async function loadProperty() {
+            const id = new URLSearchParams(window.location.search).get('id');
+            if (!id) {
+                document.getElementById('property-status').textContent = 'لم يتم تحديد العقار المطلوب.';
+                return;
+            }
+
+            try {
+                const response = await fetch('properties.json', { cache: 'no-store' });
+                if (!response.ok) throw new Error('تعذر تحميل بيانات العقارات.');
+                const properties = await response.json();
+                if (!Array.isArray(properties)) throw new Error('بيانات العقارات غير صالحة.');
+                const property = properties.find(item => String(item.id) === id);
+                if (!property) throw new Error('العقار المطلوب غير موجود أو تم حذفه.');
+                renderProperty(property);
+            } catch (error) {
+                const status = document.getElementById('property-status');
+                status.textContent = error.message || 'تعذر تحميل تفاصيل العقار.';
+            }
+        }
+
+        loadProperty();
+    </script>
+</body>
+</html>

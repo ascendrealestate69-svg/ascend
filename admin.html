@@ -161,6 +161,10 @@
                     <label>عنوان العقار</label>
                     <input type="text" id="propTitle" class="form-control" placeholder="مثال: فيلا مودرن مستقلة" required>
                 </div>
+                <div class="form-group">
+                    <label for="propDescription">وصف العقار</label>
+                    <textarea id="propDescription" class="form-control" rows="5" maxlength="5000" placeholder="اكتب تفاصيل ومميزات العقار"></textarea>
+                </div>
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
                     <div class="form-group"><label>السعر (EGP)</label><input type="number" id="propPrice" class="form-control" required></div>
                     <div class="form-group"><label>الموقع / المدينة</label><input type="text" id="propLoc" class="form-control" required></div>
@@ -453,6 +457,7 @@
             document.getElementById('saveBtnText').innerText = "حفظ التعديلات";
 
             document.getElementById('propTitle').value = p.title;
+            document.getElementById('propDescription').value = p.description || '';
             document.getElementById('propPrice').value = p.price;
             document.getElementById('propLoc').value = p.location;
             document.getElementById('propType').value = p.type || 'villa';
@@ -482,6 +487,7 @@
                         return {
                             ...p,
                             title: document.getElementById('propTitle').value,
+                            description: document.getElementById('propDescription').value.trim(),
                             price: Number(document.getElementById('propPrice').value),
                             location: document.getElementById('propLoc').value,
                             type: document.getElementById('propType').value,
@@ -499,6 +505,7 @@
                 const newProp = {
                     id: Date.now(),
                     title: document.getElementById('propTitle').value,
+                    description: document.getElementById('propDescription').value.trim(),
                     price: Number(document.getElementById('propPrice').value),
                     location: document.getElementById('propLoc').value,
                     type: document.getElementById('propType').value,

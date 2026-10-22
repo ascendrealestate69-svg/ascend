@@ -595,6 +595,7 @@
             return {
                 id: item.id,
                 title: item.title,
+                description: item.description || '',
                 city: item.location ? item.location.split(' - ')[0] : (item.city || 'القاهرة الجديدة'),
                 type: item.type === 'villa' || item.type === 'فيلا' ? 'فيلا' : (item.type === 'office' || item.type === 'مكتب' ? 'مكتب' : 'شقة'),
                 price: Number(item.price),
@@ -697,7 +698,7 @@
                             </div>
 
                             <div class="p-6">
-                                <h3 class="font-bold text-lg text-white mb-2 line-clamp-2 leading-[1.4]">${escapeHtml(p.title)}</h3>
+                                <h3 class="font-bold text-lg text-white mb-2 line-clamp-2 leading-[1.4]"><a href="property.html?id=${encodeURIComponent(p.id)}" class="text-white hover:text-ascend-green transition">${escapeHtml(p.title)}</a></h3>
                                 <div class="text-xl font-black text-ascend-green mb-4 font-sans">${p.priceText}</div>
 
                                 <div class="grid grid-cols-3 gap-2 py-3 border-y border-ascend-cardBorder text-xs text-ascend-muted mb-4">
@@ -709,9 +710,9 @@
                         </div>
 
                         <div class="px-6 pb-6 flex gap-2">
-                            <button onclick="openGalleryModal(${p.id})" class="flex-1 py-3 rounded-xl font-bold bg-ascend-green/10 border border-ascend-green/30 text-ascend-green hover:bg-ascend-green hover:text-black transition text-sm flex items-center justify-center gap-1.5">
-                                <i class="fas fa-images"></i> معرض الصور
-                            </button>
+                            <a href="property.html?id=${encodeURIComponent(p.id)}" class="flex-1 py-3 rounded-xl font-bold bg-ascend-green/10 border border-ascend-green/30 text-ascend-green hover:bg-ascend-green hover:text-black transition text-sm flex items-center justify-center gap-1.5">
+                                <i class="fas fa-circle-info"></i> تفاصيل العقار
+                            </a>
                             <a href="#contact" class="flex-1 py-3 rounded-xl font-bold bg-ascend-accent border border-ascend-cardBorder text-white text-center hover:bg-ascend-green hover:text-black transition text-sm">
                                 استفسر الآن
                             </a>
