@@ -101,22 +101,7 @@
             <div class="flex items-center justify-between h-20">
                 
                 <!-- Ascend Real Estate Logo -->
-                <div class="flex items-center" id="mainHeaderLogo">
-                    <a href="#" class="flex items-center gap-3 group">
-                        <div class="w-10 h-10 transition-transform group-hover:scale-105">
-                            <svg viewBox="0 0 100 100" class="w-full h-full fill-ascend-green">
-                                <rect width="100" height="100" rx="6" />
-                                <path d="M 0,100 A 70,70 0 0,1 70,30 L 70,65 A 35,35 0 0,0 0,100 Z" fill="#0E1217" />
-                            </svg>
-                        </div>
-                        <div class="flex flex-col">
-                            <span class="font-extrabold text-2xl tracking-tight text-white leading-none">
-                                ascend
-                            </span>
-                            <span class="text-[10px] text-white font-bold tracking-[0.25em] mt-1.5">REAL ESTATE</span>
-                        </div>
-                    </a>
-                </div>
+                <div class="flex items-center" id="mainHeaderLogo"></div>
 
                 <!-- Navigation Links -->
                 <div class="hidden lg:flex items-center gap-8 font-medium text-sm text-gray-300">
@@ -501,9 +486,7 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-10 items-start">
                 <div class="space-y-3 text-right">
-                    <div class="flex items-center gap-2">
-                        <span class="font-extrabold text-2xl tracking-tight text-white">ascend<span class="text-ascend-green">.</span></span>
-                    </div>
+                    <div class="flex items-center gap-2" id="footerLogo"></div>
                     <p class="text-sm text-ascend-muted leading-relaxed max-w-md">
                         الوسيط العقاري المفضل للعقارات والمشاريع السكنية والتجارية الفاخرة.
                     </p>
@@ -573,11 +556,13 @@
 
         function loadLogo() {
             const storedLogo = localStorage.getItem('ascend_logo');
-            if (storedLogo) {
-                document.getElementById('mainHeaderLogo').innerHTML = `
-                    <img src="${escapeHtml(storedLogo)}" class="h-10 max-w-[180px] object-contain" alt="Ascend Real Estate">
-                `;
-            }
+            const logoMarkup = storedLogo
+                ? `<a href="#hero" class="block"><img src="${escapeHtml(storedLogo)}" class="h-10 max-w-[180px] object-contain" alt="شعار Ascend"></a>`
+                : '';
+            document.getElementById('mainHeaderLogo').innerHTML = logoMarkup;
+            document.getElementById('footerLogo').innerHTML = storedLogo
+                ? `<img src="${escapeHtml(storedLogo)}" class="h-8 max-w-[144px] object-contain" alt="شعار Ascend">`
+                : '';
         }
 
         function escapeHtml(value) {

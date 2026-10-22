@@ -39,7 +39,9 @@
 <body class="min-h-screen">
     <header class="sticky top-0 z-10 border-b border-ascend-cardBorder bg-ascend-dark/95 backdrop-blur">
         <div class="mx-auto flex h-20 max-w-6xl items-center justify-between px-4">
-            <a href="index.html" class="text-2xl font-extrabold text-white">ascend<span class="text-ascend-green">.</span></a>
+            <a id="property-logo" href="index.html" class="flex min-h-10 items-center">
+                <img id="property-logo-image" class="hidden h-10 max-w-[180px] object-contain" alt="شعار Ascend">
+            </a>
             <a href="index.html#properties" class="rounded-xl border border-ascend-cardBorder px-4 py-2 text-sm text-white transition hover:border-ascend-green hover:text-ascend-green">
                 <i class="fas fa-arrow-right ml-1"></i> العودة للعقارات
             </a>
@@ -66,6 +68,21 @@
                 ? property.images
                 : [property.img || property.imageUrl];
             return images.filter(image => typeof image === 'string' && image);
+        }
+
+        async function loadLogo() {
+            try {
+                const response = await fetch('logo.json', { cache: 'no-store' });
+                if (!response.ok) throw new Error('تعذر تحميل الشعار المنشور.');
+                const logo = await response.json();
+                if (typeof logo.logoUrl !== 'string' || !logo.logoUrl) return;
+
+                const image = document.getElementById('property-logo-image');
+                image.src = logo.logoUrl;
+                image.classList.remove('hidden');
+            } catch (error) {
+                console.error('Could not load the published logo.', error);
+            }
         }
 
         function renderProperty(property) {
@@ -149,6 +166,7 @@
             }
         }
 
+        loadLogo();
         loadProperty();
     </script>
 </body>
