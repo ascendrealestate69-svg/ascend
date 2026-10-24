@@ -1,5 +1,21 @@
 [
   {
+    "id": 1792868871021,
+    "title": "شقة للبيع 3غرف 135متر  - ماونتن فيو - كريك فيو - تقاطع طريق الدائرى الأوسطى مع طريق العين السخنه - التجمع الخامس",
+    "description": "إجمالى السعر 8,5 مليون بإطلالة على الاجون \nأستفسر الأن لمعرفة مزيد من التفاصيل",
+    "price": 8500000,
+    "location": "القاهرة الجديدة - التجمع الخامس",
+    "type": "apartment",
+    "action": "buy",
+    "beds": 3,
+    "baths": 2,
+    "area": 135,
+    "img": "https://raw.githubusercontent.com/ascendrealestate69-svg/ascend/main/images/img_f14e08aa-8ff4-4916-8604-a84867c80a9e.jpg",
+    "images": [
+      "https://raw.githubusercontent.com/ascendrealestate69-svg/ascend/main/images/img_f14e08aa-8ff4-4916-8604-a84867c80a9e.jpg"
+    ]
+  },
+  {
     "id": 1792618701699,
     "title": "رفاهية السكن المطلق.. فيلات مستقلة و Crown Palace في Mountain View 1.1 اتصل بنا الآن لمعرفة خطط الأسعار والخصومات الحصرية.",
     "price": 63700000,
