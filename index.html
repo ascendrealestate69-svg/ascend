@@ -226,8 +226,8 @@
                 <p class="text-ascend-muted text-sm max-w-md leading-[1.7]">تصفح أفضل الفرص العقارية المختارة بعناية فائقة لتلبي أعلى معايير الرفاهية والاستثمار الناجح.</p>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" id="properties-grid">
-                <!-- Dynamically Populated -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" id="properties-grid" aria-live="polite">
+                <p class="col-span-full py-12 text-center text-ascend-muted">جاري تحميل العقارات المنشورة...</p>
             </div>
 
         </div>
@@ -521,15 +521,7 @@
     <!-- JavaScript Logic -->
     <script src="api-config.js"></script>
     <script>
-        const defaultProperties = [
-            { id: 1, title: 'فيلا مستقلة بإطلالة مباشرة على الجولف', city: 'القاهرة الجديدة', type: 'فيلا', price: 28500000, priceText: '28,500,000 ج.م', action: 'buy', beds: 5, baths: 6, area: 580, img: 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=800&q=80', images: ['https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=800&q=80'] },
-            { id: 2, title: 'شقة فاخرة مفروشة بالكامل في كمبوند زايد', city: 'الشيخ زايد', type: 'شقة', price: 9800000, priceText: '9,800,000 ج.م', action: 'buy', beds: 3, baths: 3, area: 210, img: 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80', images: ['https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80'] },
-            { id: 3, title: 'مكتب إداري بالتشطيب الكامل بمنطقة الأعمال', city: 'العاصمة الإدارية', type: 'مكتب', price: 6500000, priceText: '6,500,000 ج.م', action: 'buy', beds: 2, baths: 2, area: 125, img: 'https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=800&q=80', images: ['https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=800&q=80'] },
-            { id: 4, title: 'شالية صف أول على البحر في أفضل قرى الساحل', city: 'الساحل الشمالي', type: 'شقة', price: 14200000, priceText: '14,200,000 ج.م', action: 'buy', beds: 3, baths: 2, area: 160, img: 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=800&q=80', images: ['https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=800&q=80'] },
-            { id: 5, title: 'تاون هاوس استلام فوري بتقسيط مريح', city: 'القاهرة الجديدة', type: 'فيلا', price: 16500000, priceText: '16,500,000 ج.م', action: 'buy', beds: 4, baths: 4, area: 340, img: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=800&q=80', images: ['https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=800&q=80'] },
-            { id: 6, title: 'بنتهاوس مودرن مع حمام سباحة خاص (للإيجار)', city: 'الشيخ زايد', type: 'شقة', price: 85000, priceText: '85,000 ج.م / شهرياً', action: 'rent', beds: 4, baths: 4, area: 310, img: 'https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?auto=format&fit=crop&w=800&q=80', images: ['https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?auto=format&fit=crop&w=800&q=80'] }
-        ];
-
+        let publishedProperties = [];
         let favorites = [];
         let searchActionType = 'buy';
         let activeGalleryImages = [];
@@ -539,18 +531,18 @@
         async function loadSiteData() {
             try {
                 const [propertiesResponse, logoResponse] = await Promise.all([
-                    fetch('properties.json', { cache: 'no-store' }),
+                    fetch(`properties.json?updated=${Date.now()}`, { cache: 'no-store' }),
                     fetch('logo.json', { cache: 'no-store' })
                 ]);
                 if (!propertiesResponse.ok || !logoResponse.ok) throw new Error('Unable to load published site data.');
                 const properties = await propertiesResponse.json();
                 const logo = await logoResponse.json();
                 if (!Array.isArray(properties)) throw new Error('Published property data has an invalid format.');
-                localStorage.setItem('ascend_properties', JSON.stringify(properties.map(mapApiProperty)));
+                publishedProperties = properties.map(mapApiProperty);
                 if (logo.logoUrl) localStorage.setItem('ascend_logo', logo.logoUrl);
                 else localStorage.removeItem('ascend_logo');
             } catch (error) {
-                console.error('Could not load the latest published data; using the local fallback.', error);
+                throw new Error('تعذر تحميل العقارات المنشورة من GitHub. تحقق من اتصال الإنترنت ثم أعد تحميل الصفحة.', { cause: error });
             }
         }
 
@@ -594,20 +586,24 @@
             };
         }
 
-        function getStoredProperties() {
-            const stored = localStorage.getItem('ascend_properties');
-            if (!stored) return defaultProperties;
-            try {
-                return JSON.parse(stored).map(mapApiProperty);
-            } catch (e) {
-                return defaultProperties;
-            }
+        function getPublishedProperties() {
+            return publishedProperties;
         }
 
         window.addEventListener('load', async () => {
-            await loadSiteData();
-            loadLogo();
-            renderProperties(getStoredProperties());
+            try {
+                await loadSiteData();
+                loadLogo();
+                filterProperties();
+            } catch (error) {
+                console.error('Could not load published site data from GitHub.', error);
+                document.getElementById('properties-grid').innerHTML = `
+                    <div class="col-span-full rounded-2xl border border-ascend-cardBorder py-12 text-center text-ascend-muted">
+                        <p class="font-bold">${escapeHtml(error.message)}</p>
+                        <button onclick="window.location.reload()" class="mt-4 rounded-xl bg-ascend-green px-5 py-2 font-bold text-black">إعادة المحاولة</button>
+                    </div>
+                `;
+            }
             runMortgageCalc();
 
             const btn = document.getElementById('mobile-menu-btn');
@@ -635,7 +631,7 @@
             const type = document.getElementById('filter-type').value;
             const maxPrice = document.getElementById('filter-price').value;
 
-            const filtered = getStoredProperties().filter(item => {
+            const filtered = getPublishedProperties().filter(item => {
                 const matchAction = item.action === searchActionType;
                 const matchCity = city === 'all' || item.city.includes(city);
                 const matchType = type === 'all' || item.type === type;
@@ -709,7 +705,7 @@
 
         /* Modal Gallery Logic */
         function openGalleryModal(id) {
-            const prop = getStoredProperties().find(p => p.id === id);
+            const prop = getPublishedProperties().find(p => p.id === id);
             if (!prop) return;
 
             activeGalleryImages = prop.images && prop.images.length ? prop.images : [prop.img];
@@ -762,7 +758,7 @@
             const list = document.getElementById('fav-modal-list');
             modal.classList.toggle('hidden');
 
-            const favItems = getStoredProperties().filter(p => favorites.includes(p.id));
+            const favItems = getPublishedProperties().filter(p => favorites.includes(p.id));
             if (favItems.length === 0) {
                 list.innerHTML = `<p class="text-xs text-ascend-muted text-center py-4">لم تقم بإضافة أي عقارات للمفضلة بعد.</p>`;
             } else {

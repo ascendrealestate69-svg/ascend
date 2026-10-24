@@ -153,7 +153,7 @@
             }
 
             try {
-                const response = await fetch('properties.json', { cache: 'no-store' });
+                const response = await fetch(`properties.json?updated=${Date.now()}`, { cache: 'no-store' });
                 if (!response.ok) throw new Error('تعذر تحميل بيانات العقارات.');
                 const properties = await response.json();
                 if (!Array.isArray(properties)) throw new Error('بيانات العقارات غير صالحة.');

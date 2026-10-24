@@ -97,7 +97,9 @@
                 </div>
                 <button class="btn-primary" onclick="openModalForAdd()"><i class="fa-solid fa-plus"></i> إضافة عقار جديد</button>
             </div>
-            <div class="grid-container" id="admin-properties-list"></div>
+            <div class="grid-container" id="admin-properties-list">
+                <p style="color: var(--text-muted);">سجّل الدخول لتحميل العقارات من GitHub.</p>
+            </div>
         </div>
 
         <div id="tab-logo" style="display: none;">
@@ -210,12 +212,7 @@
         const ADMIN_PASSWORD_KEY = 'ascend_admin_password';
         let currentUploadedImages = [];
         let currentLogoUrl = '';
-
-
-        const defaultProperties = [
-            { id: 1, title: 'فيلا فاخرة بتصميم مودرن وحمام سباحة', price: 28500000, location: 'القاهرة الجديدة - التجمع الخامس', type: 'villa', beds: 5, baths: 6, area: 580, img: 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=800&q=80', images: ['https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=800&q=80'] },
-            { id: 2, title: 'شقة فاخرة مفروشة بالكامل في كمبوند زايد', price: 9800000, location: 'الشيخ زايد - كمبوند متكامل', type: 'penthouse', beds: 3, baths: 3, area: 210, img: 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80', images: ['https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80'] }
-        ];
+        let publishedProperties = [];
 
         async function apiRequest(path, options = {}) {
             if (!API_BASE_URL) throw new Error('Configure ASCEND_API_URL in api-config.js.');
@@ -350,9 +347,14 @@
             });
         }
 
-        function getStoredProperties() {
-            const data = localStorage.getItem('ascend_properties');
-            return data ? JSON.parse(data) : defaultProperties;
+        async function loadPublishedProperties() {
+            const { content: properties } = await apiRequest('/api/files/properties.json', { cache: 'no-store' });
+            if (!Array.isArray(properties)) throw new Error('صيغة ملف العقارات المنشور غير صحيحة.');
+            return properties;
+        }
+
+        function getPublishedProperties() {
+            return publishedProperties;
         }
 
         function escapeHtml(value) {
@@ -366,15 +368,13 @@
         }
 
         async function initializeAdmin() {
-            const [propertiesResponse, logoResponse] = await Promise.all([
-                fetch('properties.json', { cache: 'no-store' }),
+            const [properties, logoResponse] = await Promise.all([
+                loadPublishedProperties(),
                 fetch('logo.json', { cache: 'no-store' })
             ]);
-            if (!propertiesResponse.ok || !logoResponse.ok) throw new Error('تعذر تحميل بيانات الموقع المنشورة.');
-            const properties = await propertiesResponse.json();
+            if (!logoResponse.ok) throw new Error('تعذر تحميل بيانات الموقع المنشورة.');
             const logo = await logoResponse.json();
-            if (!Array.isArray(properties)) throw new Error('صيغة ملف العقارات غير صحيحة.');
-            localStorage.setItem('ascend_properties', JSON.stringify(properties));
+            publishedProperties = properties;
             currentLogoUrl = logo.logoUrl || '';
             loadLogo();
             renderProperties();
@@ -397,13 +397,16 @@
                 document.getElementById('authError').textContent = 'أضف عنوان Cloudflare Worker إلى api-config.js أولًا.';
             }
             loadLogo();
-            renderProperties();
         });
 
         function renderProperties() {
-            const properties = getStoredProperties();
+            const properties = getPublishedProperties();
             const container = document.getElementById('admin-properties-list');
-            
+            if (!properties.length) {
+                container.innerHTML = '<p style="color:var(--text-muted);">لا توجد عقارات منشورة على GitHub حتى الآن.</p>';
+                return;
+            }
+
             container.innerHTML = properties.map(p => {
                 const imgs = p.images && p.images.length ? p.images : [p.img];
                 return `
@@ -445,7 +448,7 @@
         }
 
         function openModalForEdit(id) {
-            const properties = getStoredProperties();
+            const properties = getPublishedProperties();
             const p = properties.find(item => item.id === id);
             if (!p) return;
 
@@ -471,60 +474,63 @@
 
         async function saveProperty(e) {
             e.preventDefault();
-            let properties = getStoredProperties();
             const editId = document.getElementById('editPropId').value;
-
             const finalImages = currentUploadedImages.length 
                 ? currentUploadedImages 
                 : ['https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=800&q=80'];
-
-            if (editId) {
-                properties = properties.map(p => {
-                    if (p.id == editId) {
-                        return {
-                            ...p,
-                            title: document.getElementById('propTitle').value,
-                            description: document.getElementById('propDescription').value.trim(),
-                            price: Number(document.getElementById('propPrice').value),
-                            location: document.getElementById('propLoc').value,
-                            type: document.getElementById('propType').value,
-                            action: document.getElementById('propAction').value,
-                            beds: Number(document.getElementById('propBeds').value),
-                            baths: Number(document.getElementById('propBaths').value),
-                            area: Number(document.getElementById('propArea').value),
-                            img: finalImages[0],
-                            images: finalImages
-                        };
-                    }
-                    return p;
-                });
-            } else {
-                const newProp = {
-                    id: Date.now(),
-                    title: document.getElementById('propTitle').value,
-                    description: document.getElementById('propDescription').value.trim(),
-                    price: Number(document.getElementById('propPrice').value),
-                    location: document.getElementById('propLoc').value,
-                    type: document.getElementById('propType').value,
-                    action: document.getElementById('propAction').value,
-                    beds: Number(document.getElementById('propBeds').value),
-                    baths: Number(document.getElementById('propBaths').value),
-                    area: Number(document.getElementById('propArea').value),
-                    img: finalImages[0],
-                    images: finalImages
-                };
-                properties.unshift(newProp);
-            }
-
             const saveBtn = document.getElementById('saveBtnText');
             saveBtn.disabled = true;
-            saveBtn.innerText = 'جاري الحفظ والنشر...';
+            saveBtn.innerText = 'جاري تحميل أحدث بيانات GitHub...';
             try {
+                let properties = await loadPublishedProperties();
+
+                if (editId) {
+                    if (!properties.some(p => String(p.id) === editId)) {
+                        throw new Error('تم حذف هذا العقار من GitHub على جهاز آخر. حدّث الصفحة وحاول مرة أخرى.');
+                    }
+                    properties = properties.map(p => {
+                        if (String(p.id) === editId) {
+                            return {
+                                ...p,
+                                title: document.getElementById('propTitle').value,
+                                description: document.getElementById('propDescription').value.trim(),
+                                price: Number(document.getElementById('propPrice').value),
+                                location: document.getElementById('propLoc').value,
+                                type: document.getElementById('propType').value,
+                                action: document.getElementById('propAction').value,
+                                beds: Number(document.getElementById('propBeds').value),
+                                baths: Number(document.getElementById('propBaths').value),
+                                area: Number(document.getElementById('propArea').value),
+                                img: finalImages[0],
+                                images: finalImages
+                            };
+                        }
+                        return p;
+                    });
+                } else {
+                    const newProp = {
+                        id: Date.now(),
+                        title: document.getElementById('propTitle').value,
+                        description: document.getElementById('propDescription').value.trim(),
+                        price: Number(document.getElementById('propPrice').value),
+                        location: document.getElementById('propLoc').value,
+                        type: document.getElementById('propType').value,
+                        action: document.getElementById('propAction').value,
+                        beds: Number(document.getElementById('propBeds').value),
+                        baths: Number(document.getElementById('propBaths').value),
+                        area: Number(document.getElementById('propArea').value),
+                        img: finalImages[0],
+                        images: finalImages
+                    };
+                    properties.unshift(newProp);
+                }
+
+                saveBtn.innerText = 'جاري الحفظ والنشر...';
                 await saveJsonToBackend('properties.json', properties, editId ? 'تعديل عقار' : 'إضافة عقار جديد');
-                localStorage.setItem('ascend_properties', JSON.stringify(properties));
+                publishedProperties = properties;
                 closeModal();
                 renderProperties();
-                alert(editId ? 'تم حفظ التعديلات ونشرها على الموقع.' : 'تمت إضافة العقار ونشره على الموقع.');
+                alert(editId ? 'تم حفظ التعديلات في GitHub. سيظهر التحديث على الموقع بعد اكتمال النشر.' : 'تم حفظ العقار في GitHub. سيظهر على الموقع بعد اكتمال النشر.');
             } catch (err) {
                 alert(`تعذر حفظ العقار: ${err.message}`);
             } finally {
@@ -535,12 +541,10 @@
 
         async function deleteProperty(id) {
             if (confirm('تأكيد حذف العقار؟')) {
-                let properties = getStoredProperties();
-                properties = properties.filter(p => p.id !== id);
-                
                 try {
+                    const properties = (await loadPublishedProperties()).filter(p => p.id !== id);
                     await saveJsonToBackend('properties.json', properties, 'حذف عقار');
-                    localStorage.setItem('ascend_properties', JSON.stringify(properties));
+                    publishedProperties = properties;
                     renderProperties();
                 } catch (err) {
                     alert(`تعذر حذف العقار: ${err.message}`);

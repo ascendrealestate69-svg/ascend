@@ -37,6 +37,12 @@ export default {
                 requireAdmin(request, env);
                 return await uploadImage(request, env, origin);
             }
+            if (url.pathname.startsWith('/api/files/') && request.method === 'GET') {
+                requireAdmin(request, env);
+                const filePath = decodeURIComponent(url.pathname.slice('/api/files/'.length));
+                if (filePath !== 'properties.json') return jsonResponse({ error: 'File is not readable by this endpoint.' }, 404, origin);
+                return await readSiteFile(env, filePath, origin);
+            }
             if (url.pathname.startsWith('/api/files/') && request.method === 'PUT') {
                 requireAdmin(request, env);
                 const filePath = decodeURIComponent(url.pathname.slice('/api/files/'.length));
@@ -153,6 +159,56 @@ async function updateSiteFile(request, env, filePath, origin) {
     const message = typeof body.message === 'string' ? body.message.slice(0, 120) : `Update ${filePath}`;
     await writeGitHubFile(env, filePath, new TextEncoder().encode(JSON.stringify(body.content, null, 2)), message);
     return jsonResponse({ ok: true }, 200, origin);
+}
+
+async function readSiteFile(env, filePath, origin) {
+    if (!env.GITHUB_TOKEN) {
+        const error = new Error('GitHub access is not configured on the Worker.');
+        error.status = 503;
+        throw error;
+    }
+    const apiUrl = `https://api.github.com/repos/${env.GITHUB_OWNER}/${env.GITHUB_REPO}/contents/${filePath}?ref=${encodeURIComponent(env.GITHUB_BRANCH)}`;
+    const response = await fetch(apiUrl, {
+        headers: {
+            'Accept': 'application/vnd.github+json',
+            'Authorization': 'Bearer ' + env.GITHUB_TOKEN,
+            'X-GitHub-Api-Version': '2022-11-28',
+            'User-Agent': 'Ascend-Admin-Worker'
+        }
+    });
+    if (response.status === 404) return jsonResponse({ error: 'The requested GitHub file was not found.' }, 404, origin);
+    if (!response.ok) {
+        const error = new Error(`GitHub could not read ${filePath} (${response.status}).`);
+        error.status = 502;
+        throw error;
+    }
+
+    const file = await response.json();
+    if (file.encoding !== 'base64' || typeof file.content !== 'string') {
+        const error = new Error(`GitHub returned an unsupported format for ${filePath}.`);
+        error.status = 502;
+        throw error;
+    }
+    let content;
+    try {
+        content = JSON.parse(new TextDecoder().decode(base64ToBytes(file.content.replace(/\s/g, ''))));
+    } catch {
+        const error = new Error(`GitHub returned invalid JSON for ${filePath}.`);
+        error.status = 502;
+        throw error;
+    }
+    if (!Array.isArray(content)) {
+        const error = new Error('Published property data has an invalid format.');
+        error.status = 502;
+        throw error;
+    }
+    const validationError = validateProperties(content);
+    if (validationError) {
+        const error = new Error(`Published property data is invalid: ${validationError}`);
+        error.status = 502;
+        throw error;
+    }
+    return jsonResponse({ content }, 200, origin);
 }
 
 function validateProperties(properties) {
