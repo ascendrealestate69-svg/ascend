@@ -84,13 +84,14 @@
     "location": "القاهرة الجديدة - التجمع الخامس",
     "type": "villa",
     "action": "buy",
-    "beds": 3,
+    "beds": 4,
     "baths": 2,
     "area": 346,
     "img": "https://raw.githubusercontent.com/ascendrealestate69-svg/ascend/main/images/img_4400ea2c-ed74-4399-bc6d-7d2b247bb8fc.jpeg",
     "images": [
       "https://raw.githubusercontent.com/ascendrealestate69-svg/ascend/main/images/img_4400ea2c-ed74-4399-bc6d-7d2b247bb8fc.jpeg"
-    ]
+    ],
+    "description": ""
   },
   {
     "id": 1,
