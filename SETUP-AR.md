@@ -15,6 +15,7 @@
    | `CLOUDFLARE_ACCOUNT_ID` | Cloudflare Account ID |
    | `ASCEND_CONTENTS_TOKEN` | GitHub Fine-grained token للمستودع |
    | `ASCEND_ADMIN_PASSWORD` | كلمة مرور إدارة قوية وفريدة |
+   | `GOOGLE_TRANSLATE_API_KEY` | Google Cloud API key مع تفعيل Cloud Translation API والفوترة |
 
 3. شغّل workflow **Deploy admin API** من تبويب **Actions** باستخدام **Run workflow** على الفرع `main`.
 4. بعد نجاح التشغيل، انتظر اكتمال نشر GitHub Pages، ثم افتح `https://ascendrealestates.com/admin.html`.
@@ -22,3 +23,5 @@
 الـworkflow لا يقرأ الأسرار أو يطبعها في السجلات؛ تُخزَّن كلمة المرور ومفتاح المستودع كأسرار داخل Cloudflare Worker. تقيّد CORS الطلبات على نطاقي الموقع المحددين في `worker/wrangler.toml`.
 
 بعد اكتمال الإعداد، افتح لوحة الإدارة وسجّل الدخول بكلمة المرور التي أضفتها. بيانات العقارات تُقرأ من GitHub وتُحفظ مباشرة في `properties.json` عبر Worker؛ لا تعتمد على التخزين المحلي للمتصفح، ويمكنك إدارتها من أي جهاز. كما تُحفظ الصور في المستودع، ويبدأ GitHub Pages نشر التغييرات بعد حفظها. إدارة الشعار تحفظه في ملفات المستودع، وطلبات العملاء تظهر في اللوحة وتُحفظ في D1، لا في مستودع عام.
+
+لترجمة إعلانات العقارات تلقائيًا، فعّل Cloud Translation API والفوترة في Google Cloud، ثم أضف `GOOGLE_TRANSLATE_API_KEY` كـGitHub Actions repository secret وشغّل **Deploy admin API** مرة أخرى. من نموذج العقار استخدم زر **ترجمة الإعلان إلى الإنجليزية**، وراجع الترجمة قبل الحفظ. لا تضع مفتاح Google في الموقع أو في المحادثات؛ يبقى سرًا داخل Cloudflare Worker.
