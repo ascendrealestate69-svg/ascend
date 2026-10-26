@@ -23,10 +23,6 @@ export default {
                 requireAdmin(request, env);
                 return jsonResponse({ ok: true }, 200, origin);
             }
-            if (url.pathname === '/api/translate-property' && request.method === 'POST') {
-                requireAdmin(request, env);
-                return await translateProperty(request, env, origin);
-            }
             if (url.pathname === '/api/leads' && request.method === 'POST') {
                 return await createLead(request, env, origin);
             }
@@ -134,94 +130,6 @@ async function createLead(request, env, origin) {
         'INSERT INTO leads (name, phone, property_type, area) VALUES (?, ?, ?, ?)'
     ).bind(name, phone, type, area).run();
     return jsonResponse({ ok: true }, 201, origin);
-}
-
-async function translateProperty(request, env, origin) {
-    if (!env.GOOGLE_TRANSLATE_API_KEY) {
-        const error = new Error('Google Cloud Translation is not configured. Add GOOGLE_TRANSLATE_API_KEY to GitHub Actions secrets and redeploy the admin API.');
-        error.status = 503;
-        throw error;
-    }
-
-    const body = await parseJson(request);
-    const fields = [
-        cleanText(body.title, 200, 'title'),
-        typeof body.description === 'string' ? body.description.trim() : '',
-        cleanText(body.location, 200, 'location')
-    ];
-    if (typeof body.description !== 'string' || body.description.length > 5000) {
-        const error = new Error('Invalid description.');
-        error.status = 400;
-        throw error;
-    }
-    const nonEmptyFields = fields.map((value, index) => ({ value, index })).filter(field => field.value);
-    if (!nonEmptyFields.length) {
-        const error = new Error('Enter at least one property field to translate.');
-        error.status = 400;
-        throw error;
-    }
-
-    const url = new URL('https://translation.googleapis.com/language/translate/v2');
-    url.searchParams.set('key', env.GOOGLE_TRANSLATE_API_KEY);
-    let response;
-    try {
-        response = await fetch(url.toString(), {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json; charset=utf-8' },
-            body: JSON.stringify({
-                q: nonEmptyFields.map(field => field.value),
-                source: 'ar',
-                target: 'en',
-                format: 'text'
-            })
-        });
-    } catch (error) {
-        console.error('Google Cloud Translation request failed.', error);
-        const requestError = new Error('Could not connect to Google Cloud Translation.');
-        requestError.status = 502;
-        throw requestError;
-    }
-    if (!response.ok) {
-        const error = new Error(`Google Cloud Translation failed (${response.status}). Check the API key and billing configuration.`);
-        error.status = 502;
-        throw error;
-    }
-
-    let result;
-    try {
-        result = await response.json();
-    } catch {
-        const error = new Error('Google Cloud Translation returned an invalid response.');
-        error.status = 502;
-        throw error;
-    }
-    const translations = result.data?.translations;
-    if (!Array.isArray(translations) || translations.length !== nonEmptyFields.length || translations.some(item => typeof item.translatedText !== 'string')) {
-        const error = new Error('Google Cloud Translation returned an invalid response.');
-        error.status = 502;
-        throw error;
-    }
-
-    const translatedFields = ['', '', ''];
-    nonEmptyFields.forEach((field, index) => {
-        translatedFields[field.index] = decodeGoogleTranslation(translations[index].translatedText);
-    });
-    return jsonResponse({
-        titleEn: translatedFields[0],
-        descriptionEn: translatedFields[1],
-        locationEn: translatedFields[2]
-    }, 200, origin);
-}
-
-function decodeGoogleTranslation(value) {
-    return value
-        .replace(/&amp;/g, '&')
-        .replace(/&lt;/g, '<')
-        .replace(/&gt;/g, '>')
-        .replace(/&quot;/g, '"')
-        .replace(/&#39;/g, "'")
-        .replace(/&#(\d+);/g, (_, code) => String.fromCodePoint(Number(code)))
-        .replace(/&#x([0-9a-f]+);/gi, (_, code) => String.fromCodePoint(parseInt(code, 16)));
 }
 
 function cleanText(value, maxLength, field) {

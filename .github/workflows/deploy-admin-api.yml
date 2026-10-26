@@ -29,7 +29,6 @@ jobs:
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           ADMIN_PASSWORD: ${{ secrets.ASCEND_ADMIN_PASSWORD }}
           GITHUB_CONTENT_TOKEN: ${{ secrets.ASCEND_CONTENTS_TOKEN }}
-          GOOGLE_TRANSLATE_API_KEY: ${{ secrets.GOOGLE_TRANSLATE_API_KEY }}
         run: |
           set -euo pipefail
           if [ -z "$CLOUDFLARE_API_TOKEN" ]; then
@@ -47,9 +46,6 @@ jobs:
           if [ -z "$GITHUB_CONTENT_TOKEN" ]; then
             echo "::error::The GitHub Actions secret ASCEND_CONTENTS_TOKEN is missing."
             exit 1
-          fi
-          if [ -z "$GOOGLE_TRANSLATE_API_KEY" ]; then
-            echo "::warning::The GitHub Actions secret GOOGLE_TRANSLATE_API_KEY is missing; automatic property translation will remain unavailable."
           fi
 
       - name: Create or reuse the leads database
@@ -96,14 +92,10 @@ jobs:
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           ADMIN_PASSWORD: ${{ secrets.ASCEND_ADMIN_PASSWORD }}
           GITHUB_CONTENT_TOKEN: ${{ secrets.ASCEND_CONTENTS_TOKEN }}
-          GOOGLE_TRANSLATE_API_KEY: ${{ secrets.GOOGLE_TRANSLATE_API_KEY }}
         run: |
           set -euo pipefail
           printf '%s' "$ADMIN_PASSWORD" | npx --yes wrangler@4 secret put ADMIN_PASSWORD --config wrangler.toml
           printf '%s' "$GITHUB_CONTENT_TOKEN" | npx --yes wrangler@4 secret put GITHUB_TOKEN --config wrangler.toml
-          if [ -n "$GOOGLE_TRANSLATE_API_KEY" ]; then
-            printf '%s' "$GOOGLE_TRANSLATE_API_KEY" | npx --yes wrangler@4 secret put GOOGLE_TRANSLATE_API_KEY --config wrangler.toml
-          fi
 
       - name: Deploy Worker and capture its URL
         id: deploy

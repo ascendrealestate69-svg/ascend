@@ -178,12 +178,6 @@
                     <label>Property location in English (optional)</label>
                     <input type="text" id="propLocEn" class="form-control" maxlength="200" placeholder="Example: New Cairo - Fifth Settlement" dir="ltr">
                 </div>
-                <div class="form-group">
-                    <button type="button" class="btn-secondary" id="translatePropertyButton" onclick="translatePropertyFields()">
-                        <i class="fa-solid fa-language"></i> ترجمة الإعلان إلى الإنجليزية
-                    </button>
-                    <p id="translationStatus" class="upload-status" role="status" style="display: block;"></p>
-                </div>
                 <div style="display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 10px;">
                     <div class="form-group">
                         <label>النوع</label>
@@ -373,31 +367,6 @@
 
         function getPublishedProperties() {
             return publishedProperties;
-        }
-
-        async function translatePropertyFields() {
-            const button = document.getElementById('translatePropertyButton');
-            const status = document.getElementById('translationStatus');
-            button.disabled = true;
-            status.textContent = 'جاري ترجمة الإعلان...';
-            try {
-                const translation = await apiRequest('/api/translate-property', {
-                    method: 'POST',
-                    body: JSON.stringify({
-                        title: document.getElementById('propTitle').value,
-                        description: document.getElementById('propDescription').value,
-                        location: document.getElementById('propLoc').value
-                    })
-                });
-                document.getElementById('propTitleEn').value = translation.titleEn;
-                document.getElementById('propDescriptionEn').value = translation.descriptionEn;
-                document.getElementById('propLocEn').value = translation.locationEn;
-                status.textContent = 'اكتملت الترجمة. راجع النص الإنجليزي قبل حفظ العقار.';
-            } catch (error) {
-                status.textContent = `تعذرت الترجمة: ${error.message}`;
-            } finally {
-                button.disabled = false;
-            }
         }
 
         function escapeHtml(value) {
