@@ -6,6 +6,7 @@
     <link rel="icon" type="image/png" sizes="512x512" href="/favicon.png?v=2">
     <link rel="apple-touch-icon" href="/favicon.png?v=2">
     <title>Ascend Real Estate | الوساطة والعقارات الفاخرة</title>
+    <script src="i18n.js"></script>
 
     <!-- Google Fonts & Font Awesome Icons -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -76,6 +77,20 @@
         ::-webkit-scrollbar-track { background: #0E1217; }
         ::-webkit-scrollbar-thumb { background: #21262D; border-radius: 4px; }
         ::-webkit-scrollbar-thumb:hover { background: #34FE71; }
+        html[dir="ltr"] .text-right { text-align: left; }
+        html[dir="ltr"] .text-left { text-align: right; }
+        html[dir="ltr"] .ml-1 { margin-left: 0; margin-right: .25rem; }
+        html[dir="ltr"] .ml-1\.5 { margin-left: 0; margin-right: .375rem; }
+        html[dir="ltr"] .ml-2 { margin-left: 0; margin-right: .5rem; }
+        html[dir="ltr"] .mr-1 { margin-right: 0; margin-left: .25rem; }
+        html[dir="ltr"] .mr-2 { margin-right: 0; margin-left: .5rem; }
+        html[dir="ltr"] [class~="right-4"] { right: auto; left: 1rem; }
+        html[dir="ltr"] [class~="left-4"] { left: auto; right: 1rem; }
+        html[dir="ltr"] [class~="-right-1"] { right: auto; left: -.25rem; }
+        html[dir="ltr"] .fa-arrow-left,
+        html[dir="ltr"] .fa-arrow-right,
+        html[dir="ltr"] .fa-chevron-left,
+        html[dir="ltr"] .fa-chevron-right { transform: scaleX(-1); }
     </style>
 </head>
 <body class="antialiased selection:bg-ascend-green selection:text-black">
@@ -114,6 +129,7 @@
 
                 <!-- Action Buttons -->
                 <div class="hidden sm:flex items-center gap-4">
+                    <button class="language-toggle hidden lg:block rounded-xl border border-ascend-cardBorder px-3 py-2 text-sm font-bold text-white hover:text-ascend-green transition" type="button" onclick="toggleSiteLanguage()">English</button>
                     <button onclick="toggleFavoritesModal()" class="relative p-2.5 rounded-xl bg-ascend-accent border border-ascend-cardBorder text-gray-300 hover:text-ascend-green transition">
                         <i class="fas fa-heart text-lg"></i>
                         <span id="fav-count" class="absolute -top-1 -right-1 bg-ascend-green text-black font-bold text-xs w-5 h-5 rounded-full flex items-center justify-center">0</span>
@@ -124,7 +140,8 @@
                 </div>
 
                 <!-- Mobile Menu Toggle Button -->
-                <div class="lg:hidden flex items-center">
+                <div class="lg:hidden flex items-center gap-2">
+                    <button class="language-toggle rounded-xl border border-ascend-cardBorder px-3 py-2 text-sm font-bold text-white hover:text-ascend-green transition" type="button" onclick="toggleSiteLanguage()">English</button>
                     <button id="mobile-menu-btn" class="text-gray-300 hover:text-white p-2">
                         <i class="fas fa-bars text-2xl"></i>
                     </button>
@@ -526,6 +543,7 @@
         let searchActionType = 'buy';
         let activeGalleryImages = [];
         let activeGalleryIndex = 0;
+        let activeGalleryPropertyId = null;
         const API_BASE_URL = String(window.ASCEND_API_URL || '').replace(/\/+$/, '');
 
         async function loadSiteData() {
@@ -542,18 +560,18 @@
                 if (logo.logoUrl) localStorage.setItem('ascend_logo', logo.logoUrl);
                 else localStorage.removeItem('ascend_logo');
             } catch (error) {
-                throw new Error('تعذر تحميل العقارات المنشورة من GitHub. تحقق من اتصال الإنترنت ثم أعد تحميل الصفحة.', { cause: error });
+                throw new Error(siteText('تعذر تحميل العقارات المنشورة من GitHub. تحقق من اتصال الإنترنت ثم أعد تحميل الصفحة.'), { cause: error });
             }
         }
 
         function loadLogo() {
             const storedLogo = localStorage.getItem('ascend_logo');
             const logoMarkup = storedLogo
-                ? `<a href="#hero" class="block"><img src="${escapeHtml(storedLogo)}" class="h-10 max-w-[180px] object-contain" alt="شعار Ascend"></a>`
+                ? `<a href="#hero" class="block"><img src="${escapeHtml(storedLogo)}" class="h-10 max-w-[180px] object-contain" alt="${siteText('شعار Ascend')}"></a>`
                 : '';
             document.getElementById('mainHeaderLogo').innerHTML = logoMarkup;
             document.getElementById('footerLogo').innerHTML = storedLogo
-                ? `<img src="${escapeHtml(storedLogo)}" class="h-8 max-w-[144px] object-contain" alt="شعار Ascend">`
+                ? `<img src="${escapeHtml(storedLogo)}" class="h-8 max-w-[144px] object-contain" alt="${siteText('شعار Ascend')}">`
                 : '';
         }
 
@@ -572,11 +590,13 @@
             return {
                 id: item.id,
                 title: item.title,
+                titleEn: item.titleEn || '',
                 description: item.description || '',
+                descriptionEn: item.descriptionEn || '',
                 city: item.location ? item.location.split(' - ')[0] : (item.city || 'القاهرة الجديدة'),
+                locationEn: item.locationEn || '',
                 type: item.type === 'villa' || item.type === 'فيلا' ? 'فيلا' : (item.type === 'office' || item.type === 'مكتب' ? 'مكتب' : 'شقة'),
                 price: Number(item.price),
-                priceText: Number(item.price).toLocaleString() + ' ج.م' + (item.action === 'rent' ? ' / شهرياً' : ''),
                 action: item.action === 'rent' ? 'rent' : 'buy',
                 beds: item.beds || 3,
                 baths: item.baths || 3,
@@ -600,7 +620,7 @@
                 document.getElementById('properties-grid').innerHTML = `
                     <div class="col-span-full rounded-2xl border border-ascend-cardBorder py-12 text-center text-ascend-muted">
                         <p class="font-bold">${escapeHtml(error.message)}</p>
-                        <button onclick="window.location.reload()" class="mt-4 rounded-xl bg-ascend-green px-5 py-2 font-bold text-black">إعادة المحاولة</button>
+                        <button onclick="window.location.reload()" class="mt-4 rounded-xl bg-ascend-green px-5 py-2 font-bold text-black">${siteText('إعادة المحاولة')}</button>
                     </div>
                 `;
             }
@@ -653,7 +673,7 @@
                 grid.innerHTML = `
                     <div class="col-span-full text-center py-12 glass-card rounded-2xl">
                         <i class="fas fa-building-circle-xmark text-4xl text-ascend-muted mb-3"></i>
-                        <p class="text-white font-bold">لا توجد عقارات تطابق خيارات البحث الحالية.</p>
+                        <p class="text-white font-bold">${siteText('لا توجد عقارات تطابق خيارات البحث الحالية.')}</p>
                     </div>
                 `;
                 return;
@@ -662,16 +682,18 @@
             grid.innerHTML = items.map(p => {
                 const isFav = favorites.includes(p.id);
                 const count = p.images ? p.images.length : 1;
+                const priceText = `${p.price.toLocaleString(getSiteLanguage() === 'en' ? 'en-EG' : 'ar-EG')} ${siteText('ج.م')}${p.action === 'rent' ? ` / ${siteText('شهرياً')}` : ''}`;
+                const cityLabel = getSiteLanguage() === 'en' && p.locationEn ? p.locationEn.split(' - ')[0] : p.city;
                 return `
                     <div class="glass-card rounded-3xl overflow-hidden border border-ascend-cardBorder group flex flex-col justify-between">
                         <div>
                             <div class="relative h-60 overflow-hidden cursor-pointer" onclick="openGalleryModal(${p.id})">
-                                <img src="${escapeHtml(p.img)}" alt="${escapeHtml(p.title)}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+                                <img src="${escapeHtml(p.img)}" alt="${escapeHtml(getSiteLanguage() === 'en' && p.titleEn ? p.titleEn : p.title)}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
                                 <span class="absolute top-4 right-4 bg-ascend-card/90 backdrop-blur-md px-3 py-1 rounded-full text-xs font-bold text-ascend-green border border-ascend-cardBorder">
-                                    ${escapeHtml(p.city)}
+                                    ${escapeHtml(cityLabel)}
                                 </span>
                                 <span class="absolute bottom-3 right-3 bg-black/80 backdrop-blur-md px-2.5 py-1 rounded-lg text-xs font-bold text-ascend-green flex items-center gap-1.5">
-                                    <i class="fas fa-camera"></i> ${count} صور
+                                    <i class="fas fa-camera"></i> ${count} ${siteText('صور')}
                                 </span>
                                 <button onclick="event.stopPropagation(); toggleFav(${p.id});" class="absolute top-4 left-4 w-9 h-9 rounded-full glass-panel flex items-center justify-center text-sm ${isFav ? 'text-red-500' : 'text-white hover:text-ascend-green'} transition">
                                     <i class="fas fa-heart"></i>
@@ -679,23 +701,23 @@
                             </div>
 
                             <div class="p-6">
-                                <h3 class="font-bold text-lg text-white mb-2 line-clamp-2 leading-[1.4]"><a href="property.html?id=${encodeURIComponent(p.id)}" class="text-white hover:text-ascend-green transition">${escapeHtml(p.title)}</a></h3>
-                                <div class="text-xl font-black text-ascend-green mb-4 font-sans">${p.priceText}</div>
+                                <h3 class="font-bold text-lg text-white mb-2 line-clamp-2 leading-[1.4]"><a href="property.html?id=${encodeURIComponent(p.id)}" class="text-white hover:text-ascend-green transition">${escapeHtml(getSiteLanguage() === 'en' && p.titleEn ? p.titleEn : p.title)}</a></h3>
+                                <div class="text-xl font-black text-ascend-green mb-4 font-sans">${priceText}</div>
 
                                 <div class="grid grid-cols-3 gap-2 py-3 border-y border-ascend-cardBorder text-xs text-ascend-muted mb-4">
-                                    <div class="flex items-center gap-1.5"><i class="fas fa-bed text-ascend-green"></i> ${p.beds} غرف</div>
-                                    <div class="flex items-center gap-1.5"><i class="fas fa-bath text-ascend-green"></i> ${p.baths} حمام</div>
-                                    <div class="flex items-center gap-1.5"><i class="fas fa-vector-square text-ascend-green"></i> ${p.area} م²</div>
+                                    <div class="flex items-center gap-1.5"><i class="fas fa-bed text-ascend-green"></i> ${p.beds} ${siteText('غرف')}</div>
+                                    <div class="flex items-center gap-1.5"><i class="fas fa-bath text-ascend-green"></i> ${p.baths} ${siteText('حمام')}</div>
+                                    <div class="flex items-center gap-1.5"><i class="fas fa-vector-square text-ascend-green"></i> ${p.area} ${siteText('م²')}</div>
                                 </div>
                             </div>
                         </div>
 
                         <div class="px-6 pb-6 flex gap-2">
                             <a href="property.html?id=${encodeURIComponent(p.id)}" class="flex-1 py-3 rounded-xl font-bold bg-ascend-green/10 border border-ascend-green/30 text-ascend-green hover:bg-ascend-green hover:text-black transition text-sm flex items-center justify-center gap-1.5">
-                                <i class="fas fa-circle-info"></i> تفاصيل العقار
+                                <i class="fas fa-circle-info"></i> ${siteText('تفاصيل العقار')}
                             </a>
                             <a href="#contact" class="flex-1 py-3 rounded-xl font-bold bg-ascend-accent border border-ascend-cardBorder text-white text-center hover:bg-ascend-green hover:text-black transition text-sm">
-                                استفسر الآن
+                                ${siteText('استفسر الآن')}
                             </a>
                         </div>
                     </div>
@@ -710,8 +732,9 @@
 
             activeGalleryImages = prop.images && prop.images.length ? prop.images : [prop.img];
             activeGalleryIndex = 0;
+            activeGalleryPropertyId = id;
 
-            document.getElementById('gallery-title').innerText = prop.title;
+            document.getElementById('gallery-title').innerText = getSiteLanguage() === 'en' && prop.titleEn ? prop.titleEn : prop.title;
             updateGalleryImage();
             document.getElementById('gallery-modal').classList.remove('hidden');
         }
@@ -741,6 +764,7 @@
 
         function closeGalleryModal() {
             document.getElementById('gallery-modal').classList.add('hidden');
+            activeGalleryPropertyId = null;
         }
 
         function toggleFav(id) {
@@ -755,18 +779,22 @@
 
         function toggleFavoritesModal() {
             const modal = document.getElementById('fav-modal');
-            const list = document.getElementById('fav-modal-list');
             modal.classList.toggle('hidden');
 
+            renderFavorites();
+        }
+
+        function renderFavorites() {
+            const list = document.getElementById('fav-modal-list');
             const favItems = getPublishedProperties().filter(p => favorites.includes(p.id));
             if (favItems.length === 0) {
-                list.innerHTML = `<p class="text-xs text-ascend-muted text-center py-4">لم تقم بإضافة أي عقارات للمفضلة بعد.</p>`;
+                list.innerHTML = `<p class="text-xs text-ascend-muted text-center py-4">${siteText('لم تقم بإضافة أي عقارات للمفضلة بعد.')}</p>`;
             } else {
                 list.innerHTML = favItems.map(item => `
                     <div class="p-3 rounded-xl bg-ascend-accent border border-ascend-cardBorder flex justify-between items-center text-xs">
                         <div>
-                            <div class="font-bold text-white">${escapeHtml(item.title)}</div>
-                            <div class="text-ascend-green">${escapeHtml(item.priceText)}</div>
+                            <div class="font-bold text-white">${escapeHtml(getSiteLanguage() === 'en' && item.titleEn ? item.titleEn : item.title)}</div>
+                            <div class="text-ascend-green">${item.price.toLocaleString(getSiteLanguage() === 'en' ? 'en-EG' : 'ar-EG')} ${siteText('ج.م')}${item.action === 'rent' ? ` / ${siteText('شهرياً')}` : ''}</div>
                         </div>
                         <button onclick="toggleFav(${item.id}); toggleFavoritesModal();" class="text-red-400 hover:text-red-300"><i class="fas fa-trash"></i></button>
                     </div>
@@ -784,9 +812,11 @@
             const monthly = rem / (years * 12);
             const annualRoi = price * (roiRate / 100);
 
-            document.getElementById('res-rem').innerText = `${rem.toLocaleString()} ج.م`;
-            document.getElementById('res-monthly').innerText = `${Math.round(monthly).toLocaleString()} ج.م`;
-            document.getElementById('res-annual-roi').innerText = `${Math.round(annualRoi).toLocaleString()} ج.م`;
+            const locale = getSiteLanguage() === 'en' ? 'en-EG' : 'ar-EG';
+            const currency = siteText('ج.م');
+            document.getElementById('res-rem').innerText = `${rem.toLocaleString(locale)} ${currency}`;
+            document.getElementById('res-monthly').innerText = `${Math.round(monthly).toLocaleString(locale)} ${currency}`;
+            document.getElementById('res-annual-roi').innerText = `${Math.round(annualRoi).toLocaleString(locale)} ${currency}`;
         }
 
         async function handleRealestateSubmit(e) {
@@ -797,20 +827,31 @@
             const area = document.getElementById('leadArea').value;
 
             try {
-                if (!API_BASE_URL) throw new Error('خدمة استقبال الطلبات غير مضبوطة بعد.');
+                if (!API_BASE_URL) throw new Error(siteText('خدمة استقبال الطلبات غير مضبوطة بعد.'));
                 const response = await fetch(`${API_BASE_URL}/api/leads`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ name, phone, type, area })
                 });
                 const result = await response.json().catch(() => ({}));
-                if (!response.ok) throw new Error(result.error || 'تعذر إرسال الطلب.');
+                if (!response.ok) throw new Error(result.error || siteText('تعذر إرسال الطلب.'));
                 document.getElementById('realestate-form').classList.add('hidden');
                 document.getElementById('re-form-success').classList.remove('hidden');
             } catch (error) {
-                alert(error.message);
+                alert(siteText(error.message));
             }
         }
+
+        window.addEventListener('ascend:languagechange', () => {
+            document.querySelectorAll('.language-toggle').forEach(button => {
+                button.textContent = getSiteLanguage() === 'ar' ? 'English' : 'العربية';
+            });
+            filterProperties();
+            runMortgageCalc();
+            const activeProperty = getPublishedProperties().find(property => property.id === activeGalleryPropertyId);
+            if (activeProperty) document.getElementById('gallery-title').innerText = getSiteLanguage() === 'en' && activeProperty.titleEn ? activeProperty.titleEn : activeProperty.title;
+            if (!document.getElementById('fav-modal').classList.contains('hidden')) renderFavorites();
+        });
     </script>
 </body>
 </html>

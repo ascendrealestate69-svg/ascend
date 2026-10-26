@@ -50,8 +50,10 @@
   {
     "id": 1792618701699,
     "title": "رفاهية السكن المطلق.. فيلات مستقلة و Crown Palace في Mountain View 1.1 اتصل بنا الآن لمعرفة خطط الأسعار والخصومات الحصرية.",
+    "titleEn": "The ultimate in luxury living: detached villas at Crown Palace, Mountain View 1.1. Contact us for pricing and exclusive offers.",
     "price": 63700000,
     "location": "القاهرة الجديدة - التجمع الخامس",
+    "locationEn": "New Cairo - Fifth Settlement",
     "type": "villa",
     "action": "buy",
     "beds": 5,
@@ -65,8 +67,10 @@
   {
     "id": 1792618414091,
     "title": "استلام فوري تاون هاوس فاخر في ماونتن فيو 1.1 التجمع الخامس مساحة 210 متر مربع مع حديقة بأنظمة سداد وتسهيلات مميزة.",
+    "titleEn": "Ready-to-move luxury townhouse at Mountain View 1.1, Fifth Settlement. 210 sqm with a garden and flexible payment plans.",
     "price": 39685000,
     "location": "القاهرة الجديدة - التجمع الخامس",
+    "locationEn": "New Cairo - Fifth Settlement",
     "type": "villa",
     "action": "buy",
     "beds": 4,
@@ -80,8 +84,10 @@
   {
     "id": 1792617970371,
     "title": "احصل على تجربة الفيلات بسعر مميز مع iVilla في Mountain View 1.1 مساحه 245 وحديقه 85متر بالتقسيط",
+    "titleEn": "Enjoy villa-style living at a great price with an iVilla at Mountain View 1.1. 245 sqm with an 85 sqm garden and installment options.",
     "price": 28728828,
     "location": "القاهرة الجديدة - التجمع الخامس",
+    "locationEn": "New Cairo - Fifth Settlement",
     "type": "villa",
     "action": "buy",
     "beds": 4,
@@ -96,8 +102,10 @@
   {
     "id": 1,
     "title": "امتلك شقة راقية مقدم يبدأ من 10% وأقساط مريحة  في Mountain View 1.1 التجمع الخامس احجز وحدتك الآن وتواصل معنا للتفاصيل!",
+    "titleEn": "Own an elegant apartment at Mountain View 1.1, Fifth Settlement, with a 10% down payment and easy installments. Contact us to reserve your unit.",
     "price": 19367000,
     "location": "القاهرة الجديدة - التجمع الخامس",
+    "locationEn": "New Cairo - Fifth Settlement",
     "type": "apartment",
     "action": "buy",
     "beds": 3,

@@ -159,12 +159,24 @@
                     <input type="text" id="propTitle" class="form-control" placeholder="مثال: فيلا مودرن مستقلة" required>
                 </div>
                 <div class="form-group">
+                    <label>Property title in English (optional)</label>
+                    <input type="text" id="propTitleEn" class="form-control" maxlength="200" placeholder="Example: Modern detached villa">
+                </div>
+                <div class="form-group">
                     <label for="propDescription">وصف العقار</label>
                     <textarea id="propDescription" class="form-control" rows="5" maxlength="5000" placeholder="اكتب تفاصيل ومميزات العقار"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="propDescriptionEn">Property description in English (optional)</label>
+                    <textarea id="propDescriptionEn" class="form-control" rows="5" maxlength="5000" placeholder="Enter the property details and features"></textarea>
                 </div>
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
                     <div class="form-group"><label>السعر (EGP)</label><input type="number" id="propPrice" class="form-control" required></div>
                     <div class="form-group"><label>الموقع / المدينة</label><input type="text" id="propLoc" class="form-control" required></div>
+                </div>
+                <div class="form-group">
+                    <label>Property location in English (optional)</label>
+                    <input type="text" id="propLocEn" class="form-control" maxlength="200" placeholder="Example: New Cairo - Fifth Settlement">
                 </div>
                 <div style="display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 10px;">
                     <div class="form-group">
@@ -457,9 +469,12 @@
             document.getElementById('saveBtnText').innerText = "حفظ التعديلات";
 
             document.getElementById('propTitle').value = p.title;
+            document.getElementById('propTitleEn').value = p.titleEn || '';
             document.getElementById('propDescription').value = p.description || '';
+            document.getElementById('propDescriptionEn').value = p.descriptionEn || '';
             document.getElementById('propPrice').value = p.price;
             document.getElementById('propLoc').value = p.location;
+            document.getElementById('propLocEn').value = p.locationEn || '';
             document.getElementById('propType').value = p.type || 'villa';
             document.getElementById('propAction').value = p.action || 'buy';
             document.getElementById('propBeds').value = p.beds || 3;
@@ -493,9 +508,12 @@
                             return {
                                 ...p,
                                 title: document.getElementById('propTitle').value,
+                                titleEn: document.getElementById('propTitleEn').value.trim(),
                                 description: document.getElementById('propDescription').value.trim(),
+                                descriptionEn: document.getElementById('propDescriptionEn').value.trim(),
                                 price: Number(document.getElementById('propPrice').value),
                                 location: document.getElementById('propLoc').value,
+                                locationEn: document.getElementById('propLocEn').value.trim(),
                                 type: document.getElementById('propType').value,
                                 action: document.getElementById('propAction').value,
                                 beds: Number(document.getElementById('propBeds').value),
@@ -511,9 +529,12 @@
                     const newProp = {
                         id: Date.now(),
                         title: document.getElementById('propTitle').value,
+                        titleEn: document.getElementById('propTitleEn').value.trim(),
                         description: document.getElementById('propDescription').value.trim(),
+                        descriptionEn: document.getElementById('propDescriptionEn').value.trim(),
                         price: Number(document.getElementById('propPrice').value),
                         location: document.getElementById('propLoc').value,
+                        locationEn: document.getElementById('propLocEn').value.trim(),
                         type: document.getElementById('propType').value,
                         action: document.getElementById('propAction').value,
                         beds: Number(document.getElementById('propBeds').value),

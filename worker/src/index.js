@@ -221,6 +221,9 @@ function validateProperties(properties) {
         if (typeof property.title !== 'string' || !property.title.trim() || property.title.length > 200) return 'Property title is invalid.';
         if (property.description !== undefined && (typeof property.description !== 'string' || property.description.length > 5000)) return 'Property description is invalid.';
         if (typeof property.location !== 'string' || !property.location.trim() || property.location.length > 200) return 'Property location is invalid.';
+        if (property.titleEn !== undefined && (typeof property.titleEn !== 'string' || property.titleEn.length > 200)) return 'English property title is invalid.';
+        if (property.descriptionEn !== undefined && (typeof property.descriptionEn !== 'string' || property.descriptionEn.length > 5000)) return 'English property description is invalid.';
+        if (property.locationEn !== undefined && (typeof property.locationEn !== 'string' || property.locationEn.length > 200)) return 'English property location is invalid.';
         if (!Number.isFinite(property.price) || property.price <= 0) return 'Property price is invalid.';
         if (![property.beds, property.baths, property.area].every(value => Number.isFinite(value) && value >= 0)) return 'Property dimensions are invalid.';
         if (!['villa', 'apartment', 'duplex', 'penthouse', 'office'].includes(property.type)) return 'Property type is invalid.';
