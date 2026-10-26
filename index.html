@@ -598,9 +598,9 @@
                 type: item.type === 'villa' || item.type === 'فيلا' ? 'فيلا' : (item.type === 'office' || item.type === 'مكتب' ? 'مكتب' : 'شقة'),
                 price: Number(item.price),
                 action: item.action === 'rent' ? 'rent' : 'buy',
-                beds: item.beds || 3,
-                baths: item.baths || 3,
-                area: item.area || 200,
+                beds: item.beds ?? 3,
+                baths: item.baths ?? 3,
+                area: item.area ?? 200,
                 img: imgs[0],
                 images: imgs
             };
@@ -693,7 +693,7 @@
                                     ${escapeHtml(cityLabel)}
                                 </span>
                                 <span class="absolute bottom-3 right-3 bg-black/80 backdrop-blur-md px-2.5 py-1 rounded-lg text-xs font-bold text-ascend-green flex items-center gap-1.5">
-                                    <i class="fas fa-camera"></i> ${count} ${siteText('صور')}
+                                    <i class="fas fa-camera"></i> ${count} ${siteText(count === 1 ? 'صورة' : 'صور')}
                                 </span>
                                 <button onclick="event.stopPropagation(); toggleFav(${p.id});" class="absolute top-4 left-4 w-9 h-9 rounded-full glass-panel flex items-center justify-center text-sm ${isFav ? 'text-red-500' : 'text-white hover:text-ascend-green'} transition">
                                     <i class="fas fa-heart"></i>
