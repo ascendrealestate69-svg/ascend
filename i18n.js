@@ -29,7 +29,7 @@
         'الميزانية المتاحة': 'Budget',
         'أي سعر': 'Any price',
         'أقل من 10 مليون ج.م': 'Under EGP 10 million',
-        'حتى 20 مليون ج.م': 'Up to EGP 20 million',
+        'من 10 إلى 20 مليون ج.م': 'EGP 10–20 million',
         'أكثر من 20 مليون ج.م': 'Over EGP 20 million',
         'ابحث عن العقار': 'Search properties',
         'مجموعة ممتازة': 'Exceptional collection',

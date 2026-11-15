@@ -160,7 +160,7 @@
     </nav>
 
     <!-- Hero Section -->
-    <section id="hero" class="relative pt-16 pb-24 md:pt-24 md:pb-36 overflow-hidden">
+    <section id="hero" class="relative pt-16 pb-8 md:pt-24 md:pb-10 overflow-hidden">
         <div class="absolute top-1/4 right-1/3 w-96 h-96 bg-ascend-green/10 rounded-full blur-3xl pointer-events-none"></div>
 
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
@@ -190,7 +190,7 @@
                     
                     <div class="text-right">
                         <label class="block text-xs font-semibold text-ascend-muted mb-2"><i class="fas fa-location-dot text-ascend-green ml-1"></i> المدينة / المنطقة</label>
-                        <select id="filter-city" class="w-full bg-ascend-accent border border-ascend-cardBorder rounded-xl px-3.5 py-3 text-white text-sm focus:outline-none focus:border-ascend-green">
+                        <select id="filter-city" onchange="filterProperties()" class="w-full bg-ascend-accent border border-ascend-cardBorder rounded-xl px-3.5 py-3 text-white text-sm focus:outline-none focus:border-ascend-green">
                             <option value="all">جميع المناطق</option>
                             <option value="القاهرة الجديدة">القاهرة الجديدة (التجمع)</option>
                             <option value="الشيخ زايد">الشيخ زايد / 6 أكتوبر</option>
@@ -201,21 +201,21 @@
 
                     <div class="text-right">
                         <label class="block text-xs font-semibold text-ascend-muted mb-2"><i class="fas fa-building text-ascend-green ml-1"></i> نوع العقار</label>
-                        <select id="filter-type" class="w-full bg-ascend-accent border border-ascend-cardBorder rounded-xl px-3.5 py-3 text-white text-sm focus:outline-none focus:border-ascend-green">
+                        <select id="filter-type" onchange="filterProperties()" class="w-full bg-ascend-accent border border-ascend-cardBorder rounded-xl px-3.5 py-3 text-white text-sm focus:outline-none focus:border-ascend-green">
                             <option value="all">كل الأنواع</option>
-                            <option value="فيلا">فيلا مستقلة / تاون هاوس</option>
-                            <option value="شقة">شقة فاخرة / بنتهاوس</option>
-                            <option value="مكتب">مكتب إداري / تجاري</option>
+                            <option value="villa">فيلا مستقلة / تاون هاوس</option>
+                            <option value="apartment">شقة فاخرة / بنتهاوس</option>
+                            <option value="office">مكتب إداري / تجاري</option>
                         </select>
                     </div>
 
                     <div class="text-right">
                         <label class="block text-xs font-semibold text-ascend-muted mb-2"><i class="fas fa-tag text-ascend-green ml-1"></i> الميزانية المتاحة</label>
-                        <select id="filter-price" class="w-full bg-ascend-accent border border-ascend-cardBorder rounded-xl px-3.5 py-3 text-white text-sm focus:outline-none focus:border-ascend-green">
+                        <select id="filter-price" onchange="filterProperties()" class="w-full bg-ascend-accent border border-ascend-cardBorder rounded-xl px-3.5 py-3 text-white text-sm focus:outline-none focus:border-ascend-green">
                             <option value="all">أي سعر</option>
-                            <option value="10000000">أقل من 10 مليون ج.م</option>
-                            <option value="20000000">حتى 20 مليون ج.م</option>
-                            <option value="30000000">أكثر من 20 مليون ج.م</option>
+                            <option value="under-10000000">أقل من 10 مليون ج.م</option>
+                            <option value="10000000-20000000">من 10 إلى 20 مليون ج.م</option>
+                            <option value="over-20000000">أكثر من 20 مليون ج.م</option>
                         </select>
                     </div>
 
@@ -232,10 +232,10 @@
     </section>
 
     <!-- Featured Properties Grid -->
-    <section id="properties" class="py-20 bg-ascend-dark/90 relative border-t border-ascend-cardBorder">
+    <section id="properties" class="pt-8 pb-20 bg-ascend-dark/90 relative border-t border-ascend-cardBorder">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             
-            <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-12 gap-4">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-6 gap-4">
                 <div>
                     <span class="text-ascend-green font-bold text-sm uppercase tracking-wider">مجموعة ممتازة</span>
                     <h2 class="text-3xl sm:text-4xl font-extrabold text-white mt-2 leading-[1.35]">أبرز العقارات والمشاريع المتاحة</h2>
@@ -243,7 +243,7 @@
                 <p class="text-ascend-muted text-sm max-w-md leading-[1.7]">تصفح أفضل الفرص العقارية المختارة بعناية فائقة لتلبي أعلى معايير الرفاهية والاستثمار الناجح.</p>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" id="properties-grid" aria-live="polite">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6" id="properties-grid" aria-live="polite">
                 <p class="col-span-full py-12 text-center text-ascend-muted">جاري تحميل العقارات المنشورة...</p>
             </div>
 
@@ -649,15 +649,27 @@
         function filterProperties() {
             const city = document.getElementById('filter-city').value;
             const type = document.getElementById('filter-type').value;
-            const maxPrice = document.getElementById('filter-price').value;
+            const priceRange = document.getElementById('filter-price').value;
+            const propertyTypes = {
+                villa: ['villa', 'townhouse'],
+                apartment: ['apartment', 'duplex', 'penthouse'],
+                office: ['office']
+            };
 
             const filtered = getPublishedProperties().filter(item => {
                 const matchAction = item.action === searchActionType;
-                const matchCity = city === 'all' || item.city.includes(city);
-                const matchType = type === 'all' || item.type === type;
-                let matchPrice = true;
-                if (maxPrice !== 'all') {
-                    matchPrice = item.price <= parseFloat(maxPrice);
+                const itemCity = String(item.city || item.location || '').toLocaleLowerCase();
+                const matchCity = city === 'all' || itemCity.includes(city.toLocaleLowerCase());
+                const itemType = String(item.type || '').toLocaleLowerCase();
+                const matchType = type === 'all' || (propertyTypes[type] || [type]).includes(itemType);
+                const itemPrice = Number(item.price);
+                let matchPrice = priceRange === 'all';
+                if (priceRange === 'under-10000000') {
+                    matchPrice = Number.isFinite(itemPrice) && itemPrice < 10000000;
+                } else if (priceRange === '10000000-20000000') {
+                    matchPrice = Number.isFinite(itemPrice) && itemPrice >= 10000000 && itemPrice <= 20000000;
+                } else if (priceRange === 'over-20000000') {
+                    matchPrice = Number.isFinite(itemPrice) && itemPrice > 20000000;
                 }
                 return matchAction && matchCity && matchType && matchPrice;
             });
